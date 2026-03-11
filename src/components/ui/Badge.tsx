@@ -11,19 +11,19 @@ interface BadgeProps {
 
 const variants: Record<BadgeVariant, string> = {
   default: 'bg-surface-tertiary text-text-secondary',
-  success: 'bg-green-50 text-green-700 border-green-200',
-  warning: 'bg-amber-50 text-amber-700 border-amber-200',
-  error:   'bg-red-50 text-red-700 border-red-200',
-  info:    'bg-blue-50 text-blue-700 border-blue-200',
+  success: 'bg-status-success-50 text-status-success-700 border-status-success/20',
+  warning: 'bg-status-warning-50 text-status-warning-700 border-status-warning/20',
+  error:   'bg-status-error-50 text-status-error-700 border-status-error/20',
+  info:    'bg-status-info-50 text-status-info-700 border-status-info/20',
   brand:   'bg-brand-50 text-brand-700 border-brand-200',
 }
 
 const dotColours: Record<BadgeVariant, string> = {
   default: 'bg-text-tertiary',
-  success: 'bg-green-500',
-  warning: 'bg-amber-500',
-  error:   'bg-red-500',
-  info:    'bg-blue-500',
+  success: 'bg-status-success',
+  warning: 'bg-status-warning',
+  error:   'bg-status-error',
+  info:    'bg-status-info',
   brand:   'bg-brand-500',
 }
 

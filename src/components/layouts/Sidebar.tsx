@@ -70,15 +70,15 @@ export function Sidebar({
       style={{ background: 'var(--sidebar-bg)' }}
     >
       {/* Logo / Company */}
-      <div className="flex items-center gap-3 px-4 h-[var(--topbar-height)] border-b border-white/10 shrink-0">
+      <div className="flex items-center gap-3 px-4 h-[var(--topbar-height)] border-b border-text-inverse/10 shrink-0">
         {companyLogo ? (
           <img src={companyLogo} alt={companyName} className="w-8 h-8 rounded" />
         ) : (
-          <div className="w-8 h-8 rounded bg-brand-600 flex items-center justify-center text-white font-bold text-sm">
+          <div className="w-8 h-8 rounded bg-brand-600 flex items-center justify-center text-text-inverse font-bold text-sm">
             {companyName[0]}
           </div>
         )}
-        {!collapsed && <span className="text-sm font-semibold text-white truncate">{companyName}</span>}
+        {!collapsed && <span className="text-sm font-semibold text-text-inverse truncate">{companyName}</span>}
       </div>
 
       {/* Nav groups */}
@@ -102,8 +102,8 @@ export function Sidebar({
                     className={cn(
                       'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
                       isActive
-                        ? 'text-white'
-                        : 'hover:text-white'
+                        ? 'text-text-inverse'
+                        : 'hover:text-text-inverse'
                     )}
                     style={{
                       color: isActive ? 'var(--sidebar-text-active)' : 'var(--sidebar-text)',
@@ -115,7 +115,7 @@ export function Sidebar({
                     {item.icon}
                     {!collapsed && <span className="truncate">{item.label}</span>}
                     {!collapsed && item.badge && (
-                      <span className="ml-auto text-xs bg-brand-500 text-white px-1.5 py-0.5 rounded-full">
+                      <span className="ml-auto text-xs bg-brand-500 text-text-inverse px-1.5 py-0.5 rounded-full">
                         {item.badge}
                       </span>
                     )}
@@ -128,7 +128,7 @@ export function Sidebar({
       </nav>
 
       {/* Bottom: Settings + User */}
-      <div className="border-t border-white/10 px-3 py-3 space-y-1 shrink-0">
+      <div className="border-t border-text-inverse/10 px-3 py-3 space-y-1 shrink-0">
         <a
           href="/settings"
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
@@ -142,12 +142,12 @@ export function Sidebar({
 
         {/* User */}
         <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
+          <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-text-inverse text-xs font-bold shrink-0">
             {userName.split(' ').map(n => n[0]).join('')}
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="text-sm font-medium text-white truncate">{userName}</p>
+              <p className="text-sm font-medium text-text-inverse truncate">{userName}</p>
               <p className="text-xs truncate" style={{ color: 'var(--sidebar-text)' }}>{userRole}</p>
             </div>
           )}

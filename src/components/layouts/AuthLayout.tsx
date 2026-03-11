@@ -12,7 +12,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <div className="w-12 h-12 rounded-xl bg-brand-600 flex items-center justify-center">
-            <span className="text-white text-xl font-bold">E</span>
+            <span className="text-text-inverse text-xl font-bold">E</span>
           </div>
         </div>
 

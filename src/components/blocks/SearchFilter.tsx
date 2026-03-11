@@ -86,7 +86,7 @@ export function SearchFilter({
             <SlidersHorizontal className="w-4 h-4" />
             Filters
             {activeCount > 0 && (
-              <span className="bg-brand-600 text-white text-xs px-1.5 py-0.5 rounded-full">{activeCount}</span>
+              <span className="bg-brand-600 text-text-inverse text-xs px-1.5 py-0.5 rounded-full">{activeCount}</span>
             )}
           </button>
         )}

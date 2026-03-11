@@ -41,7 +41,7 @@ export function Topbar({ onMenuClick, notifications = 0 }: TopbarProps) {
         <button className="relative p-2 rounded hover:bg-surface-tertiary text-text-secondary">
           <Bell className="w-5 h-5" />
           {notifications > 0 && (
-            <span className="absolute top-1 right-1 w-4 h-4 bg-status-error text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+            <span className="absolute top-1 right-1 w-4 h-4 bg-status-error text-text-inverse text-[10px] font-bold rounded-full flex items-center justify-center">
               {notifications > 9 ? '9+' : notifications}
             </span>
           )}

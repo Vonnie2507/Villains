@@ -96,7 +96,7 @@ export function CalendarView({ events = [], onDateClick, onEventClick, className
             >
               <span className={cn(
                 'inline-flex items-center justify-center w-6 h-6 text-xs font-medium rounded-full',
-                isToday ? 'bg-brand-600 text-white' : 'text-text-secondary'
+                isToday ? 'bg-brand-600 text-text-inverse' : 'text-text-secondary'
               )}>
                 {day}
               </span>

@@ -6,7 +6,7 @@ interface PrintLayoutProps {
 /** Clean print-friendly layout for invoices, quotes, reports */
 export function PrintLayout({ children, title }: PrintLayoutProps) {
   return (
-    <div className="min-h-screen bg-white p-8 max-w-4xl mx-auto print:p-0">
+    <div className="min-h-screen bg-surface p-8 max-w-4xl mx-auto print:p-0">
       {/* Print-only header */}
       <div className="print:block hidden mb-8">
         <h1 className="text-xl font-bold">{title}</h1>
@@ -22,14 +22,14 @@ export function PrintLayout({ children, title }: PrintLayoutProps) {
         </button>
         <button
           onClick={() => window.print()}
-          className="px-4 py-2 bg-brand-600 text-white rounded text-sm font-medium hover:bg-brand-700"
+          className="px-4 py-2 bg-brand-600 text-text-inverse rounded text-sm font-medium hover:bg-brand-700"
         >
           Print / PDF
         </button>
       </div>
 
       {/* Content */}
-      <div className="bg-white border border-border rounded-lg shadow-card p-8 print:border-0 print:shadow-none print:p-0">
+      <div className="bg-surface border border-border rounded-lg shadow-card p-8 print:border-0 print:shadow-none print:p-0">
         {children}
       </div>
     </div>
