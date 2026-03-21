@@ -1,6 +1,8 @@
 'use client'
 
 import { Bell, Search, Menu } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import { getInitials } from '@/lib/utils'
 import { Dropdown } from '@/components/ui/Dropdown'
 
 interface TopbarProps {
@@ -9,6 +11,9 @@ interface TopbarProps {
 }
 
 export function Topbar({ onMenuClick, notifications = 0 }: TopbarProps) {
+  const { profile, signOut } = useAuth()
+  const initials = profile ? getInitials(profile.display_name || profile.full_name) : 'U'
+
   return (
     <header
       className="sticky top-0 z-20 flex items-center justify-between px-6 border-b"
@@ -41,7 +46,7 @@ export function Topbar({ onMenuClick, notifications = 0 }: TopbarProps) {
         <button className="relative p-2 rounded hover:bg-surface-tertiary text-text-secondary">
           <Bell className="w-5 h-5" />
           {notifications > 0 && (
-            <span className="absolute top-1 right-1 w-4 h-4 bg-status-error text-text-inverse text-[10px] font-bold rounded-full flex items-center justify-center">
+            <span className="absolute top-1 right-1 w-4 h-4 bg-status-error text-white text-[10px] font-bold rounded-full flex items-center justify-center">
               {notifications > 9 ? '9+' : notifications}
             </span>
           )}
@@ -50,16 +55,16 @@ export function Topbar({ onMenuClick, notifications = 0 }: TopbarProps) {
         <Dropdown
           trigger={
             <button className="p-2 rounded hover:bg-surface-tertiary text-text-secondary">
-              <div className="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold">
-                U
+              <div className="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center text-xs font-bold">
+                {initials}
               </div>
             </button>
           }
           items={[
-            { id: 'profile', label: 'My Profile', onClick: () => {} },
-            { id: 'settings', label: 'Settings', onClick: () => {} },
+            { id: 'profile', label: 'My Profile', onClick: () => window.location.href = '/settings' },
+            { id: 'settings', label: 'Settings', onClick: () => window.location.href = '/settings' },
             { id: 'div', label: '', divider: true },
-            { id: 'logout', label: 'Log out', danger: true, onClick: () => {} },
+            { id: 'logout', label: 'Sign out', danger: true, onClick: signOut },
           ]}
         />
       </div>

@@ -2,11 +2,13 @@
 
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 import {
-  LayoutDashboard, Users, Briefcase, FileText, Calendar, Package,
-  BarChart3, Settings, ChevronLeft, ChevronRight, LogOut, Bell,
-  UserCircle, Menu, UsersRound
+  LayoutDashboard, Calendar, DollarSign, Users, MessageSquare,
+  Settings, ChevronLeft, ChevronRight, LogOut, Inbox,
+  UserCircle, ClipboardList, AlertTriangle, Palette
 } from 'lucide-react'
+import type { UserRole } from '@/types'
 
 interface NavItem {
   id: string
@@ -21,45 +23,61 @@ interface NavGroup {
   items: NavItem[]
 }
 
-/** Default nav structure — customise per client by changing this array */
-const DEFAULT_NAV: NavGroup[] = [
+/** Admin/reception sidebar navigation */
+const ADMIN_NAV: NavGroup[] = [
   {
     items: [
-      { id: 'dashboard', label: 'Dashboard',  href: '/dashboard',  icon: <LayoutDashboard className="w-5 h-5" /> },
-      { id: 'contacts',  label: 'Contacts',   href: '/contacts',   icon: <Users className="w-5 h-5" /> },
-      { id: 'jobs',      label: 'Jobs',        href: '/jobs',       icon: <Briefcase className="w-5 h-5" /> },
-      { id: 'quotes',    label: 'Quotes',      href: '/quotes',     icon: <FileText className="w-5 h-5" /> },
-      { id: 'calendar',  label: 'Calendar',    href: '/calendar',   icon: <Calendar className="w-5 h-5" /> },
+      { id: 'dashboard', label: 'Dashboard',    href: '/dashboard',  icon: <LayoutDashboard className="w-5 h-5" /> },
+      { id: 'schedule',  label: 'Schedule',     href: '/schedule',   icon: <Calendar className="w-5 h-5" /> },
+      { id: 'payments',  label: 'Payments',     href: '/payments',   icon: <DollarSign className="w-5 h-5" /> },
+      { id: 'enquiries', label: 'Enquiries',    href: '/enquiries',  icon: <Inbox className="w-5 h-5" /> },
     ]
   },
   {
-    title: 'Operations',
+    title: 'Studio',
     items: [
-      { id: 'inventory', label: 'Inventory',   href: '/inventory',  icon: <Package className="w-5 h-5" /> },
-      { id: 'team',      label: 'Team',         href: '/team',       icon: <UsersRound className="w-5 h-5" /> },
-      { id: 'reports',   label: 'Reports',      href: '/reports',    icon: <BarChart3 className="w-5 h-5" /> },
+      { id: 'team',      label: 'Team',         href: '/team',       icon: <Users className="w-5 h-5" /> },
+      { id: 'messages',  label: 'Messages',     href: '/messages',   icon: <MessageSquare className="w-5 h-5" /> },
+      { id: 'incidents', label: 'Incidents',     href: '/incidents',  icon: <AlertTriangle className="w-5 h-5" /> },
     ]
   },
 ]
 
-interface SidebarProps {
-  nav?: NavGroup[]
-  activePath?: string
-  companyName?: string
-  companyLogo?: string
-  userName?: string
-  userRole?: string
+/** Artist-side sidebar navigation */
+const ARTIST_NAV: NavGroup[] = [
+  {
+    items: [
+      { id: 'dashboard', label: 'Dashboard',    href: '/dashboard',  icon: <LayoutDashboard className="w-5 h-5" /> },
+      { id: 'schedule',  label: 'My Schedule',  href: '/schedule',   icon: <Calendar className="w-5 h-5" /> },
+      { id: 'payments',  label: 'Payments',     href: '/payments',   icon: <DollarSign className="w-5 h-5" /> },
+      { id: 'clients',   label: 'My Clients',   href: '/clients',    icon: <Palette className="w-5 h-5" /> },
+    ]
+  },
+  {
+    title: 'Communication',
+    items: [
+      { id: 'bookings',  label: 'Bookings',     href: '/bookings',   icon: <ClipboardList className="w-5 h-5" /> },
+      { id: 'messages',  label: 'Messages',     href: '/messages',   icon: <MessageSquare className="w-5 h-5" /> },
+    ]
+  },
+]
+
+function getNavForRole(role: UserRole | null): NavGroup[] {
+  if (role === 'artist') return ARTIST_NAV
+  return ADMIN_NAV
 }
 
-export function Sidebar({
-  nav = DEFAULT_NAV,
-  activePath = '/dashboard',
-  companyName = 'Company Name',
-  companyLogo,
-  userName = 'User Name',
-  userRole = 'Admin',
-}: SidebarProps) {
+interface SidebarProps {
+  activePath?: string
+}
+
+export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false)
+  const { profile, role, signOut } = useAuth()
+  const nav = getNavForRole(role)
+
+  const displayName = profile?.display_name || profile?.full_name || 'User'
+  const roleLabel = role === 'super_admin' ? 'Owner' : role === 'admin' ? 'Reception' : 'Artist'
 
   return (
     <aside
@@ -69,16 +87,16 @@ export function Sidebar({
       )}
       style={{ background: 'var(--sidebar-bg)' }}
     >
-      {/* Logo / Company */}
-      <div className="flex items-center gap-3 px-4 h-[var(--topbar-height)] border-b border-text-inverse/10 shrink-0">
-        {companyLogo ? (
-          <img src={companyLogo} alt={companyName} className="w-8 h-8 rounded" />
-        ) : (
-          <div className="w-8 h-8 rounded bg-brand-600 flex items-center justify-center text-text-inverse font-bold text-sm">
-            {companyName[0]}
-          </div>
+      {/* Logo */}
+      <div className="flex items-center gap-3 px-4 h-[var(--topbar-height)] border-b border-white/10 shrink-0">
+        <div className="w-8 h-8 rounded bg-brand-500 flex items-center justify-center text-white font-bold text-sm">
+          V
+        </div>
+        {!collapsed && (
+          <span className="text-sm font-semibold text-white truncate" style={{ fontFamily: 'var(--font-display)' }}>
+            Villains Tattoo
+          </span>
         )}
-        {!collapsed && <span className="text-sm font-semibold text-text-inverse truncate">{companyName}</span>}
       </div>
 
       {/* Nav groups */}
@@ -101,9 +119,7 @@ export function Sidebar({
                     title={collapsed ? item.label : undefined}
                     className={cn(
                       'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                      isActive
-                        ? 'text-text-inverse'
-                        : 'hover:text-text-inverse'
+                      isActive ? 'text-white' : 'hover:text-white'
                     )}
                     style={{
                       color: isActive ? 'var(--sidebar-text-active)' : 'var(--sidebar-text)',
@@ -114,8 +130,8 @@ export function Sidebar({
                   >
                     {item.icon}
                     {!collapsed && <span className="truncate">{item.label}</span>}
-                    {!collapsed && item.badge && (
-                      <span className="ml-auto text-xs bg-brand-500 text-text-inverse px-1.5 py-0.5 rounded-full">
+                    {!collapsed && item.badge !== undefined && item.badge > 0 && (
+                      <span className="ml-auto text-xs bg-brand-500 text-white px-1.5 py-0.5 rounded-full">
                         {item.badge}
                       </span>
                     )}
@@ -127,8 +143,8 @@ export function Sidebar({
         ))}
       </nav>
 
-      {/* Bottom: Settings + User */}
-      <div className="border-t border-text-inverse/10 px-3 py-3 space-y-1 shrink-0">
+      {/* Bottom: Settings + User + Logout */}
+      <div className="border-t border-white/10 px-3 py-3 space-y-1 shrink-0">
         <a
           href="/settings"
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
@@ -142,14 +158,23 @@ export function Sidebar({
 
         {/* User */}
         <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-text-inverse text-xs font-bold shrink-0">
-            {userName.split(' ').map(n => n[0]).join('')}
+          <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
+            {displayName.split(' ').map(n => n[0]).join('').slice(0, 2)}
           </div>
           {!collapsed && (
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-text-inverse truncate">{userName}</p>
-              <p className="text-xs truncate" style={{ color: 'var(--sidebar-text)' }}>{userRole}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-white truncate">{displayName}</p>
+              <p className="text-xs truncate" style={{ color: 'var(--sidebar-text)' }}>{roleLabel}</p>
             </div>
+          )}
+          {!collapsed && (
+            <button
+              onClick={signOut}
+              className="p-1.5 rounded hover:bg-white/10 text-neutral-500 hover:text-white transition-colors"
+              title="Sign out"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
           )}
         </div>
       </div>

@@ -1,19 +1,20 @@
+/** Centred card layout for login pages — Villains branded */
 interface AuthLayoutProps {
   children: React.ReactNode
   title?: string
   subtitle?: string
 }
 
-/** Centred card layout for login/signup pages */
 export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-surface-secondary p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-brand-600 flex items-center justify-center">
-            <span className="text-text-inverse text-xl font-bold">E</span>
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-14 h-14 rounded-xl bg-brand-500 flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl font-bold" style={{ fontFamily: 'var(--font-display)' }}>V</span>
           </div>
+          <p className="mt-3 text-sm text-text-tertiary" style={{ fontFamily: 'var(--font-display)' }}>Villains Tattoo Studio</p>
         </div>
 
         {/* Card */}

@@ -1,14 +1,27 @@
-import '@/styles/theme.css'
+'use client'
 
-export const metadata = {
-  title: 'ERP Template',
-  description: 'White-label ERP shell template',
-}
+import '@/styles/theme.css'
+import { AuthProvider } from '@/contexts/AuthContext'
+import { ToastProvider } from '@/contexts/ToastContext'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <head>
+        <title>Villains Tattoo Studio</title>
+        <meta name="description" content="Studio management for Villains Tattoo" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
+        <AuthProvider>
+          <ToastProvider>
+            {children}
+          </ToastProvider>
+        </AuthProvider>
+      </body>
     </html>
   )
 }

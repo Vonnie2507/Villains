@@ -1,19 +1,6 @@
 /*
   ============================================================
-  THEME FILE — Change this ONE file to rebrand the entire app
-  ============================================================
-
-  HOW TO USE:
-  1. Change the brand colours below to match your client
-  2. Optionally change fonts, radius, shadows
-  3. Everything else updates automatically
-
-  EXAMPLE CLIENTS:
-  - Fencing company: brand = green tones
-  - Plumber: brand = blue tones
-  - Electrician: brand = yellow/amber tones
-  - Landscaper: brand = earth tones
-  Just swap the hex values below.
+  VILLAINS TATTOO STUDIO — Dark theme with villain red accents
   ============================================================
 */
 
@@ -22,91 +9,92 @@
 @tailwind utilities;
 
 :root {
-  /* ── BRAND COLOURS ── Change these to rebrand ── */
-  --brand-50:  #eff6ff;
-  --brand-100: #dbeafe;
-  --brand-200: #bfdbfe;
-  --brand-300: #93c5fd;
-  --brand-400: #60a5fa;
-  --brand-500: #3b82f6;   /* ← Primary brand colour */
-  --brand-600: #2563eb;
-  --brand-700: #1d4ed8;
-  --brand-800: #1e40af;
-  --brand-900: #1e3a8a;
+  /* ── BRAND COLOURS ── Villain Red ── */
+  --brand-50:  #2a1015;
+  --brand-100: #3d1520;
+  --brand-200: #5c1e30;
+  --brand-300: #8b2a45;
+  --brand-400: #c23858;
+  --brand-500: #e94560;   /* ← Primary villain red */
+  --brand-600: #c81d45;
+  --brand-700: #a01535;
+  --brand-800: #7d1028;
+  --brand-900: #fce4ec;
 
-  /* ── SECONDARY COLOURS ── Supporting brand colour ── */
-  --secondary-50:  #f5f3ff;
-  --secondary-100: #ede9fe;
-  --secondary-200: #ddd6fe;
-  --secondary-300: #c4b5fd;
-  --secondary-400: #a78bfa;
-  --secondary-500: #8b5cf6;
-  --secondary-600: #7c3aed;
-  --secondary-700: #6d28d9;
-  --secondary-800: #5b21b6;
-  --secondary-900: #4c1d95;
+  /* ── SECONDARY COLOURS ── Midnight Blue ── */
+  --secondary-50:  #0a0e1a;
+  --secondary-100: #0f1a30;
+  --secondary-200: #142040;
+  --secondary-300: #1a2d55;
+  --secondary-400: #1f3a6b;
+  --secondary-500: #0f3460;
+  --secondary-600: #0c2a50;
+  --secondary-700: #092040;
+  --secondary-800: #061630;
+  --secondary-900: #c8d6e5;
 
-  /* ── ACCENT COLOURS ── Highlights, CTAs ── */
-  --accent-50:  #ecfdf5;
-  --accent-100: #d1fae5;
-  --accent-200: #a7f3d0;
-  --accent-300: #6ee7b7;
-  --accent-400: #34d399;
-  --accent-500: #10b981;
-  --accent-600: #059669;
-  --accent-700: #047857;
-  --accent-800: #065f46;
-  --accent-900: #064e3b;
+  /* ── ACCENT COLOURS ── Gold highlights ── */
+  --accent-50:  #1a1508;
+  --accent-100: #2d2410;
+  --accent-200: #4d3d1a;
+  --accent-300: #7a6229;
+  --accent-400: #b8933d;
+  --accent-500: #d4a94e;
+  --accent-600: #c49a40;
+  --accent-700: #a07d32;
+  --accent-800: #7c6026;
+  --accent-900: #fdf2d0;
 
-  /* ── NEUTRAL ── Greys for general use ── */
-  --neutral-50:  #f9fafb;
-  --neutral-100: #f3f4f6;
-  --neutral-200: #e5e7eb;
-  --neutral-300: #d1d5db;
-  --neutral-400: #9ca3af;
-  --neutral-500: #6b7280;
-  --neutral-600: #4b5563;
-  --neutral-700: #374151;
-  --neutral-800: #1f2937;
-  --neutral-900: #111827;
+  /* ── NEUTRAL ── Dark greys ── */
+  --neutral-50:  #0a0a12;
+  --neutral-100: #12121e;
+  --neutral-200: #1e1e2e;
+  --neutral-300: #2a2a3e;
+  --neutral-400: #4a4a60;
+  --neutral-500: #6b6b80;
+  --neutral-600: #8888a0;
+  --neutral-700: #a0a0b8;
+  --neutral-800: #c8c8d8;
+  --neutral-900: #e8e8f0;
 
-  /* ── SURFACES ── Background colours ── */
-  --surface:           #ffffff;
-  --surface-secondary: #f8fafc;
-  --surface-tertiary:  #f1f5f9;
-  --surface-overlay:   rgba(0, 0, 0, 0.5);
-  --surface-glass:     rgba(255, 255, 255, 0.7);
+  /* ── SURFACES ── Dark backgrounds ── */
+  --surface:           #1a1a2e;
+  --surface-secondary: #12121e;
+  --surface-tertiary:  #242440;
+  --surface-overlay:   rgba(0, 0, 0, 0.7);
+  --surface-glass:     rgba(26, 26, 46, 0.8);
 
   /* ── BORDERS ── */
-  --border:           #e2e8f0;
-  --border-secondary: #cbd5e1;
-  --border-subtle:    #f1f5f9;
-  --border-strong:    #94a3b8;
+  --border:           #2a2a44;
+  --border-secondary: #3a3a55;
+  --border-subtle:    #1e1e32;
+  --border-strong:    #4a4a66;
   --border-focus:     var(--brand-500);
 
-  /* ── TEXT ── */
-  --text-primary:   #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary:  #94a3b8;
-  --text-inverse:   #ffffff;
-  --text-link:      var(--brand-600);
+  /* ── TEXT ── Light on dark ── */
+  --text-primary:   #f1f1f5;
+  --text-secondary: #a0a0b8;
+  --text-tertiary:  #6b6b80;
+  --text-inverse:   #0a0a12;
+  --text-link:      var(--brand-500);
 
   /* ── STATUS COLOURS ── */
   --status-success:     #22c55e;
-  --status-success-50:  #f0fdf4;
-  --status-success-700: #15803d;
+  --status-success-50:  #0a2015;
+  --status-success-700: #4ade80;
   --status-warning:     #f59e0b;
-  --status-warning-50:  #fffbeb;
-  --status-warning-700: #b45309;
+  --status-warning-50:  #1a1508;
+  --status-warning-700: #fbbf24;
   --status-error:       #ef4444;
-  --status-error-50:    #fef2f2;
-  --status-error-700:   #b91c1c;
+  --status-error-50:    #200a0a;
+  --status-error-700:   #f87171;
   --status-info:        #3b82f6;
-  --status-info-50:     #eff6ff;
-  --status-info-700:    #1d4ed8;
+  --status-info-50:     #0a1520;
+  --status-info-700:    #60a5fa;
 
   /* ── FONTS ── */
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
   /* ── TYPOGRAPHY SCALE ── */
@@ -135,13 +123,13 @@
   --radius-xl: 1rem;
   --radius-full: 9999px;
 
-  /* ── SHADOWS ── */
-  --shadow-xs:       0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-card:     0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-dropdown: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg:       0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-modal:    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  --shadow-glass:    0 8px 32px rgba(0, 0, 0, 0.12);
+  /* ── SHADOWS ── Stronger for dark theme ── */
+  --shadow-xs:       0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-card:     0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-dropdown: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg:       0 10px 15px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-modal:    0 20px 25px rgba(0, 0, 0, 0.4), 0 10px 10px rgba(0, 0, 0, 0.3);
+  --shadow-glass:    0 8px 32px rgba(0, 0, 0, 0.4);
 
   /* ── TRANSITIONS ── */
   --transition-fast:   150ms ease;
@@ -158,10 +146,10 @@
   /* ── LAYOUT ── */
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 72px;
-  --sidebar-bg: #0f172a;
-  --sidebar-text: #cbd5e1;
+  --sidebar-bg: #0a0a1a;
+  --sidebar-text: #8888a0;
   --sidebar-text-active: #ffffff;
-  --sidebar-hover: rgba(255, 255, 255, 0.08);
+  --sidebar-hover: rgba(233, 69, 96, 0.1);
   --sidebar-active: var(--brand-600);
 
   --topbar-height: 64px;
@@ -173,44 +161,6 @@
   --section-gap: 1.5rem;
 }
 
-/* ── DARK MODE ── Uncomment to enable ── */
-/*
-.dark {
-  --brand-50:  #172554;
-  --brand-100: #1e3a8a;
-  --brand-500: #60a5fa;
-  --brand-600: #3b82f6;
-  --brand-900: #dbeafe;
-
-  --surface:           #0f172a;
-  --surface-secondary: #1e293b;
-  --surface-tertiary:  #334155;
-  --surface-overlay:   rgba(0, 0, 0, 0.7);
-  --surface-glass:     rgba(15, 23, 42, 0.7);
-
-  --border:           #334155;
-  --border-secondary: #475569;
-  --border-subtle:    #1e293b;
-  --border-strong:    #64748b;
-  --border-focus:     var(--brand-400);
-
-  --text-primary:   #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-tertiary:  #64748b;
-  --text-inverse:   #0f172a;
-  --text-link:      var(--brand-400);
-
-  --sidebar-bg: #020617;
-
-  --shadow-xs:       0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-card:     0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-dropdown: 0 4px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
-  --shadow-lg:       0 10px 15px rgba(0, 0, 0, 0.3), 0 4px 6px rgba(0, 0, 0, 0.2);
-  --shadow-modal:    0 20px 25px rgba(0, 0, 0, 0.3), 0 10px 10px rgba(0, 0, 0, 0.2);
-  --shadow-glass:    0 8px 32px rgba(0, 0, 0, 0.3);
-}
-*/
-
 /* ── BASE STYLES ── */
 body {
   font-family: var(--font-sans);
@@ -218,19 +168,19 @@ body {
   background: var(--surface-secondary);
 }
 
-/* ── SCROLLBAR ── */
+/* ── SCROLLBAR ── Dark theme scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
 
-/* ── FOCUS RING ── Accessible focus styles using brand colour ── */
+/* ── FOCUS RING ── Villain red focus ── */
 *:focus-visible {
   outline: 2px solid var(--brand-500);
   outline-offset: 2px;
 }
 
-/* ── TRANSITIONS ── Smooth everything ── */
+/* ── TRANSITIONS ── */
 button, a, input, select, textarea {
   transition: all var(--transition-fast);
 }
@@ -243,8 +193,8 @@ button, a, input, select, textarea {
   border: 1px solid var(--border);
 }
 
-/* ── SELECTION ── */
+/* ── SELECTION ── Villain red selection ── */
 ::selection {
-  background: var(--brand-200);
+  background: var(--brand-300);
   color: var(--brand-900);
 }
