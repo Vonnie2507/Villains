@@ -519,26 +519,27 @@ function ArtistDashboard() {
   }
 
   const STATUS_BUTTONS: { status: ScheduleDayStatus; label: string }[] = [
-    { status: 'off', label: 'Off' },
-    { status: 'in_booked', label: 'Booked' },
-    { status: 'in_touchups', label: 'Touch-ups' },
-    { status: 'in_walkins', label: 'Walk-ins' },
-    { status: 'in_custom', label: 'Custom' },
+    { status: 'off', label: 'Not In' },
+    { status: 'in_booked', label: 'Tattooing' },
+    { status: 'in_free', label: 'Free in Studio' },
+    { status: 'in_touchups', label: 'Touch Up' },
+    { status: 'in_walkins', label: 'Walk In' },
+    { status: 'cancelled', label: 'Cancelled' },
   ]
 
   return (
     <div>
       {/* ── 1. Header ── */}
-      <div className="flex items-start justify-between mb-8">
-        <div>
-          <h1 className="text-4xl font-bold text-text-primary font-display tracking-tight">
+      <div className="flex items-start justify-between mb-6 sm:mb-8 gap-2">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-4xl font-bold text-text-primary font-display tracking-tight truncate">
             Hey, {displayName}
           </h1>
-          <p className="text-lg text-text-secondary mt-1">
+          <p className="text-sm sm:text-lg text-text-secondary mt-1">
             {dayName} &middot; {dayNum}{getOrdinal(dayNum)} {monthName} {year}
           </p>
         </div>
-        <div className="text-right">
+        <div className="text-right shrink-0 hidden sm:block">
           <LiveClock />
         </div>
       </div>
@@ -673,7 +674,7 @@ function ArtistDashboard() {
               </Link>
             </CardHeader>
 
-            <div className="grid grid-cols-7 gap-2">
+            <div className="grid grid-cols-7 gap-1 sm:gap-2">
               {weekDates.map(dateStr => {
                 const d = new Date(dateStr + 'T00:00:00')
                 const shortDay = d.toLocaleDateString('en-AU', { weekday: 'short' })

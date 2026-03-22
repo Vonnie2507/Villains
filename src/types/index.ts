@@ -51,6 +51,8 @@ export interface ArtistProfile {
   specialties: string[]
   instagram_handle: string | null
   default_working_days: Record<string, boolean>
+  portal_slug: string | null
+  portal_pin: string | null
   notes: string | null
   created_at: string
   updated_at: string
@@ -79,22 +81,36 @@ export interface StaffRecord {
 
 /* ── 4. SCHEDULE DAY ── */
 
-export type ScheduleDayStatus = 'off' | 'in_booked' | 'in_touchups' | 'in_walkins' | 'in_custom'
+export type ScheduleDayStatus = 'off' | 'in_booked' | 'in_touchups' | 'in_walkins' | 'in_free' | 'cancelled' | 'in_custom'
 
 export const SCHEDULE_DAY_STATUS_OPTIONS: SelectOption[] = [
-  { value: 'off', label: 'Off' },
-  { value: 'in_booked', label: 'Booked' },
-  { value: 'in_touchups', label: 'Touch-ups' },
-  { value: 'in_walkins', label: 'Walk-ins' },
-  { value: 'in_custom', label: 'Custom' },
+  { value: 'off', label: 'Not In' },
+  { value: 'in_booked', label: 'Tattooing' },
+  { value: 'in_free', label: 'Free in Studio' },
+  { value: 'in_touchups', label: 'Touch Up' },
+  { value: 'in_walkins', label: 'Walk In' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'in_custom', label: 'Other' },
 ]
 
 export const SCHEDULE_DAY_COLOURS: Record<ScheduleDayStatus, { bg: string; text: string; label: string }> = {
-  off:          { bg: 'bg-neutral-200', text: 'text-neutral-500', label: 'Off' },
-  in_booked:    { bg: 'bg-brand-50', text: 'text-brand-500', label: 'Booked' },
-  in_touchups:  { bg: 'bg-status-info-50', text: 'text-status-info-700', label: 'Touch-ups' },
-  in_walkins:   { bg: 'bg-status-warning-50', text: 'text-status-warning-700', label: 'Walk-ins' },
-  in_custom:    { bg: 'bg-accent-100', text: 'text-accent-500', label: 'Custom' },
+  off:          { bg: 'bg-neutral-200', text: 'text-neutral-500', label: 'Not In' },
+  in_booked:    { bg: 'bg-status-success-50', text: 'text-status-success-700', label: 'Tattooing' },
+  in_free:      { bg: 'bg-brand-50', text: 'text-brand-500', label: 'Free in Studio' },
+  in_touchups:  { bg: 'bg-status-info-50', text: 'text-status-info-700', label: 'Touch Up' },
+  in_walkins:   { bg: 'bg-status-warning-50', text: 'text-status-warning-700', label: 'Walk In' },
+  cancelled:    { bg: 'bg-status-error-50', text: 'text-status-error-700', label: 'Cancelled' },
+  in_custom:    { bg: 'bg-accent-100', text: 'text-accent-500', label: 'Other' },
+}
+
+/* ── ENVELOPE STATUS ── */
+export type EnvelopeStatus = 'pending' | 'submitted' | 'received' | 'not_received'
+
+export const ENVELOPE_STATUS_LABELS: Record<EnvelopeStatus, { label: string; variant: 'default' | 'warning' | 'success' | 'error' }> = {
+  pending:      { label: 'Pending', variant: 'default' },
+  submitted:    { label: 'Submitted', variant: 'warning' },
+  received:     { label: 'Received', variant: 'success' },
+  not_received: { label: 'Not Received', variant: 'error' },
 }
 
 export interface ScheduleDay {
@@ -131,12 +147,14 @@ export interface Session {
   client_reference: string | null
   session_type: SessionType | null
   envelope_submitted: boolean
+  envelope_status: EnvelopeStatus
   envelope_photo: string | null
   notes: string | null
   created_at: string
   updated_at: string
 }
 // NOTE: NO price, amount, revenue, total, deposit, or any money field.
+// envelope_submitted = legacy boolean (artist tick), envelope_status = full 4-state tracking
 
 /* ── 6. WEEKLY SCHEDULE SUBMISSION (NO MONEY) ── */
 

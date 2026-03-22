@@ -15,6 +15,23 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    /* PWA: prevent pull-to-refresh interfering with scroll */
+    overscroll-behavior-y: contain;
+  }
+}
+
+/* PWA: safe area padding for notched phones */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .sticky {
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* PWA: larger touch targets on mobile */
+@media (max-width: 1023px) {
+  .sidebar-inactive,
+  .sidebar-active {
+    min-height: 44px;
   }
 }
 

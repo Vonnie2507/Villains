@@ -4,7 +4,7 @@ import '@/styles/theme.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ToastProvider } from '@/contexts/ToastContext'
 
-// Inline script to prevent flash of wrong theme on load
+// Inline script to prevent flash of wrong theme on load + register service worker
 const themeScript = `
 (function() {
   try {
@@ -20,6 +20,11 @@ const themeScript = `
     document.documentElement.classList.add('light');
   }
 })();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js');
+  });
+}
 `
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -28,6 +33,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <title>Villains Studio Hub</title>
         <meta name="description" content="Studio management hub for Villains Tattoo" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+        <meta name="theme-color" content="#191919" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Villains" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

@@ -76,7 +76,7 @@ function getNavForRole(role: UserRole | null): NavGroup[] {
   return ADMIN_NAV
 }
 
-export function Sidebar({ activePath = '/dashboard' }: { activePath?: string }) {
+export function Sidebar({ activePath = '/dashboard', onNavigate }: { activePath?: string; onNavigate?: () => void }) {
   const [collapsed, setCollapsed] = useState(false)
   const { profile, role, signOut } = useAuth()
   const nav = getNavForRole(role)
@@ -119,6 +119,7 @@ export function Sidebar({ activePath = '/dashboard' }: { activePath?: string }) 
                   <Link
                     key={item.id}
                     href={item.href}
+                    onClick={onNavigate}
                     title={collapsed ? item.label : undefined}
                     className={cn(
                       'flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors duration-150',
