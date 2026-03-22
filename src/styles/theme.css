@@ -67,12 +67,12 @@
   --neutral-800: #d4d4d4;
   --neutral-900: #f5f5f5;
 
-  /* ── SURFACES ── Dark bg, lighter cards ── */
-  --surface:           #2a2a2a;
-  --surface-secondary: #181818;
+  /* ── SURFACES ── Darkest bg, lighter grey cards ── */
+  --surface:           #292929;
+  --surface-secondary: #1a1a1a;
   --surface-tertiary:  #333333;
   --surface-overlay:   rgba(0, 0, 0, 0.80);
-  --surface-glass:     #303030;
+  --surface-glass:     #2e2e2e;
 
   /* ── BORDERS ── */
   --border:           #3a3a3a;
@@ -181,13 +181,7 @@ body {
   font-family: var(--font-sans);
   font-weight: 400;
   color: var(--text-primary);
-  background-color: #040404;
-  background-image:
-    radial-gradient(ellipse 80% 60% at 10% -10%, rgba(255,255,255,0.06), transparent 60%),
-    radial-gradient(ellipse 90% 70% at 90% -20%, rgba(120,120,120,0.04), transparent 70%);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
+  background-color: var(--surface-secondary);
   letter-spacing: 0.01em;
   line-height: 1.5;
 }
