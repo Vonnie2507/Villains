@@ -10,12 +10,12 @@ interface BadgeProps {
 }
 
 const variants: Record<BadgeVariant, string> = {
-  default: 'bg-surface-tertiary text-text-secondary',
+  default: 'bg-surface-tertiary text-text-secondary border-border',
   success: 'bg-status-success-50 text-status-success-700 border-status-success/20',
   warning: 'bg-status-warning-50 text-status-warning-700 border-status-warning/20',
   error:   'bg-status-error-50 text-status-error-700 border-status-error/20',
   info:    'bg-status-info-50 text-status-info-700 border-status-info/20',
-  brand:   'bg-brand-50 text-brand-700 border-brand-200',
+  brand:   'bg-brand-50 text-brand-500 border-brand-500/20',
 }
 
 const dotColours: Record<BadgeVariant, string> = {
@@ -31,7 +31,7 @@ export function Badge({ children, variant = 'default', dot = false, className }:
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border',
+        'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold border uppercase tracking-wider',
         variants[variant],
         className
       )}

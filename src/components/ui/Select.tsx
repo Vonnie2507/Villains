@@ -21,7 +21,7 @@ export function Select({ label, error, options, placeholder, className, id, ...p
   return (
     <div className="space-y-1.5">
       {label && (
-        <label htmlFor={selectId} className="block text-sm font-medium text-text-primary">
+        <label htmlFor={selectId} className="block text-xs font-semibold text-text-secondary uppercase tracking-wider">
           {label}
         </label>
       )}
@@ -29,9 +29,10 @@ export function Select({ label, error, options, placeholder, className, id, ...p
         <select
           id={selectId}
           className={cn(
-            'w-full appearance-none rounded border bg-surface px-3 py-2 pr-10 text-sm text-text-primary',
-            'focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500',
-            error ? 'border-status-error' : 'border-border',
+            'w-full appearance-none rounded-xl border bg-surface-glass px-3 py-2.5 pr-10 text-sm text-text-primary',
+            'focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/40',
+            'transition-all duration-150',
+            error ? 'border-status-error/40' : 'border-border',
             className
           )}
           {...props}
@@ -43,7 +44,7 @@ export function Select({ label, error, options, placeholder, className, id, ...p
         </select>
         <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary pointer-events-none" />
       </div>
-      {error && <p className="text-sm text-status-error">{error}</p>}
+      {error && <p className="text-xs text-status-error">{error}</p>}
     </div>
   )
 }

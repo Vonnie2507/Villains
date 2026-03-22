@@ -36,22 +36,23 @@ export function Dropdown({ trigger, items, align = 'right', className }: Dropdow
       <div onClick={() => setOpen(!open)}>{trigger}</div>
       {open && (
         <div className={cn(
-          'absolute z-40 mt-1 min-w-[180px] bg-surface border border-border rounded-lg shadow-dropdown py-1',
+          'absolute z-40 mt-2 min-w-[180px] bg-surface border border-border rounded-xl shadow-dropdown py-1.5',
           align === 'right' ? 'right-0' : 'left-0'
         )}>
           {items.map(item =>
             item.divider ? (
-              <div key={item.id} className="my-1 border-t border-border" />
+              <div key={item.id} className="my-1.5 border-t border-border" />
             ) : (
               <button
                 key={item.id}
                 onClick={() => { item.onClick?.(); setOpen(false) }}
                 className={cn(
-                  'w-full flex items-center gap-2 px-3 py-2 text-sm text-left',
+                  'w-full flex items-center gap-2 px-3 py-2 text-sm text-left transition-colors rounded-lg mx-1',
                   item.danger
                     ? 'text-status-error hover:bg-status-error-50'
-                    : 'text-text-primary hover:bg-surface-tertiary'
+                    : 'text-text-secondary hover:bg-surface-tertiary hover:text-text-primary'
                 )}
+                style={{ width: 'calc(100% - 8px)' }}
               >
                 {item.icon}
                 {item.label}

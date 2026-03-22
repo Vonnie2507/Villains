@@ -41,24 +41,21 @@ export function Modal({ open, onClose, title, description, children, size = 'md'
       onClick={(e) => { if (e.target === overlayRef.current) onClose() }}
     >
       <div className={cn(
-        'w-full bg-surface rounded-xl shadow-modal border border-border',
+        'w-full bg-surface rounded-2xl shadow-modal border border-border',
         sizeClasses[size],
         className
       )}>
-        {/* Header */}
         {(title || description) && (
           <div className="flex items-start justify-between p-6 pb-0">
             <div>
-              {title && <h2 className="text-lg font-semibold text-text-primary">{title}</h2>}
+              {title && <h2 className="text-base font-semibold text-text-primary font-display">{title}</h2>}
               {description && <p className="mt-1 text-sm text-text-secondary">{description}</p>}
             </div>
-            <button onClick={onClose} className="p-1 rounded hover:bg-surface-tertiary text-text-tertiary">
-              <X className="w-5 h-5" />
+            <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-surface-tertiary text-text-tertiary transition-colors">
+              <X className="w-4 h-4" />
             </button>
           </div>
         )}
-
-        {/* Body */}
         <div className="p-6">
           {children}
         </div>
