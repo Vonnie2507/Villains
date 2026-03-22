@@ -1,9 +1,20 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import type { ArtistProfile } from '@/types'
+import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
+import { Badge } from '@/components/ui/Badge'
+import { Input } from '@/components/ui/Input'
+import { useToast, ToastProvider } from '@/contexts/ToastContext'
+import { getWeekStart, getWeekDates, formatWeekRange, shiftWeek, isCurrentWeek } from '@/lib/dates'
+import { SCHEDULE_DAY_COLOURS, SCHEDULE_DAY_STATUS_OPTIONS } from '@/types'
+import type { ArtistProfile, ScheduleDay, ScheduleDayStatus, Session, WeeklySubmission } from '@/types'
+import {
+  ChevronLeft, ChevronRight, Plus, X, Check, Mail,
+  ClipboardCheck, AlertCircle, Trash2, LogOut
+} from 'lucide-react'
 
 export default function PortalEntry() {
   const { slug } = useParams<{ slug: string }>()
@@ -47,12 +58,10 @@ export default function PortalEntry() {
     setPin(newPin)
     setError('')
 
-    // Auto-focus next input
     if (value && index < 3) {
       inputRefs.current[index + 1]?.focus()
     }
 
-    // Auto-submit when all 4 digits entered
     if (value && index === 3) {
       const fullPin = newPin.join('')
       if (fullPin.length === 4) {
@@ -79,7 +88,6 @@ export default function PortalEntry() {
     }
   }
 
-  // ── Loading ──
   if (loading) {
     return (
       <div className="min-h-screen bg-surface-secondary flex items-center justify-center">
@@ -88,7 +96,6 @@ export default function PortalEntry() {
     )
   }
 
-  // ── Not found ──
   if (notFound || !artist) {
     return (
       <div className="min-h-screen bg-surface-secondary flex items-center justify-center p-6">
@@ -102,18 +109,19 @@ export default function PortalEntry() {
     )
   }
 
-  // ── Authenticated — show the portal ──
   if (authenticated) {
-    return <ArtistPortal artist={artist} slug={slug} />
+    return (
+      <ToastProvider>
+        <ArtistPortalInner artist={artist} slug={slug} />
+      </ToastProvider>
+    )
   }
 
-  // ── PIN entry ──
   const displayName = artist.display_name || 'Artist'
 
   return (
     <div className="min-h-screen bg-surface-secondary flex items-center justify-center p-6">
       <div className="w-full max-w-sm text-center">
-        {/* Logo */}
         <div className="w-14 h-14 rounded-2xl bg-brand-500 text-text-inverse flex items-center justify-center mx-auto mb-6">
           <span className="text-2xl font-bold font-display">V</span>
         </div>
@@ -123,7 +131,6 @@ export default function PortalEntry() {
         </h1>
         <p className="text-sm text-text-secondary mb-8">Enter your PIN to continue</p>
 
-        {/* PIN inputs */}
         <div className="flex justify-center gap-3 mb-4">
           {pin.map((digit, i) => (
             <input
@@ -152,31 +159,8 @@ export default function PortalEntry() {
 }
 
 /* ══════════════════════════════════════════════════════════
-   ARTIST PORTAL — standalone, no login required
-   Same schedule functionality as the logged-in version
+   ARTIST PORTAL — standalone schedule view
    ══════════════════════════════════════════════════════════ */
-
-import { useCallback } from 'react'
-import { Card } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { Input } from '@/components/ui/Input'
-import { useToast, ToastProvider } from '@/contexts/ToastContext'
-import { getWeekStart, getWeekDates, formatWeekRange, shiftWeek, isCurrentWeek } from '@/lib/dates'
-import { SCHEDULE_DAY_COLOURS, SCHEDULE_DAY_STATUS_OPTIONS } from '@/types'
-import type { ScheduleDay, ScheduleDayStatus, Session, WeeklySubmission } from '@/types'
-import {
-  ChevronLeft, ChevronRight, Plus, X, Check, Mail,
-  ClipboardCheck, AlertCircle, Trash2, LogOut
-} from 'lucide-react'
-
-function ArtistPortal({ artist, slug }: { artist: ArtistProfile; slug: string }) {
-  return (
-    <ToastProvider>
-      <ArtistPortalInner artist={artist} slug={slug} />
-    </ToastProvider>
-  )
-}
 
 function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: string }) {
   const { toast } = useToast()
@@ -203,7 +187,6 @@ function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: stri
   const dayNum = now.getDate()
   const monthName = now.toLocaleDateString('en-AU', { month: 'long' })
 
-  // Load week data
   const loadWeek = useCallback(async () => {
     setLoaded(false)
     const [dRes, sRes, subRes] = await Promise.all([
@@ -320,7 +303,6 @@ function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: stri
 
   return (
     <div className="min-h-screen bg-surface-secondary">
-      {/* Header */}
       <header className="sticky top-0 z-20 px-4 py-3 border-b border-border" style={{ background: 'var(--topbar-bg)', paddingTop: 'max(0.75rem, env(safe-area-inset-top))' }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -337,7 +319,6 @@ function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: stri
       </header>
 
       <main className="p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] max-w-lg mx-auto">
-        {/* Submit reminder */}
         {hasUnsubmittedDays && isCurrentWeek(weekStart) && (
           <div className="mb-4 p-3 rounded-xl bg-status-warning-50 border border-status-warning/20 flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -348,7 +329,6 @@ function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: stri
           </div>
         )}
 
-        {/* Week nav */}
         <div className="flex items-center justify-between mb-4">
           <Button variant="ghost" size="sm" onClick={() => setWeekStart(shiftWeek(weekStart, -1))}>
             <ChevronLeft className="w-4 h-4" />
@@ -375,7 +355,6 @@ function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: stri
           </div>
         ) : (
           <>
-            {/* Day cards */}
             <div className="space-y-3">
               {weekDates.map(date => {
                 const dayEntry = days.find(d => d.date === date)
@@ -493,7 +472,6 @@ function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: stri
               })}
             </div>
 
-            {/* Submit week */}
             <Card className="mt-6">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
