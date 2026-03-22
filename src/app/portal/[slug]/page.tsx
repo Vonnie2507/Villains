@@ -41,15 +41,34 @@ export default function PortalEntry() {
   }, [slug])
 
   useEffect(() => {
+    let retries = 0
     async function load() {
-      const { data } = await supabase
-        .from('artist_profiles')
-        .select('*')
-        .eq('portal_slug', slug)
-        .single()
-      if (data) setArtist(data as ArtistProfile)
-      else setNotFound(true)
-      setLoading(false)
+      try {
+        const { data, error } = await supabase
+          .from('artist_profiles')
+          .select('*')
+          .eq('portal_slug', slug)
+          .maybeSingle()
+        if (data) {
+          setArtist(data as ArtistProfile)
+          setLoading(false)
+        } else if (retries < 2) {
+          // Retry once in case of transient issue
+          retries++
+          setTimeout(load, 1000)
+        } else {
+          setNotFound(true)
+          setLoading(false)
+        }
+      } catch {
+        if (retries < 2) {
+          retries++
+          setTimeout(load, 1000)
+        } else {
+          setNotFound(true)
+          setLoading(false)
+        }
+      }
     }
     load()
   }, [slug])
