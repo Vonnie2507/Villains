@@ -327,9 +327,14 @@ span[class*="rounded-full"][class*="text-xs"] {
   font-weight: 500;
 }
 
-/* ── SIDEBAR NAV ITEMS ── Hover glow ── */
-a[class*="rounded-lg"]:hover {
-  background: rgba(255, 255, 255, 0.04) !important;
+/* ── SIDEBAR NAV ── Hover + active states ── */
+.sidebar-inactive:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+.sidebar-active {
+  background: rgba(198, 166, 103, 0.12) !important;
+  color: #f5f5f5 !important;
 }
 
 /* ── CARD HOVER ── Lift effect ── */

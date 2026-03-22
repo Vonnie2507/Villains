@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import {
   LayoutDashboard, Calendar, ClipboardList, Inbox, Users, MessageSquare,
   Settings, ChevronLeft, ChevronRight, LogOut, Palette, AlertTriangle,
-  Package, ShoppingCart, FileText, DollarSign, CheckSquare, Receipt
+  Package, ShoppingCart, FileText, DollarSign, CheckSquare
 } from 'lucide-react'
 import type { UserRole } from '@/types'
 
@@ -23,7 +23,6 @@ interface NavGroup {
   items: NavItem[]
 }
 
-/** Admin/reception sidebar navigation */
 const ADMIN_NAV: NavGroup[] = [
   {
     items: [
@@ -53,7 +52,6 @@ const ADMIN_NAV: NavGroup[] = [
   },
 ]
 
-/** Artist-side sidebar navigation */
 const ARTIST_NAV: NavGroup[] = [
   {
     items: [
@@ -95,15 +93,15 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
         'fixed left-0 top-0 h-screen flex flex-col z-30 transition-all duration-200',
         collapsed ? 'w-[var(--sidebar-collapsed-width)]' : 'w-[var(--sidebar-width)]'
       )}
-      style={{ background: 'var(--sidebar-bg)' }}
+      style={{ background: '#040404', borderRight: '1px solid rgba(255,255,255,0.06)' }}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-4 h-[var(--topbar-height)] border-b border-white/10 shrink-0">
+      <div className="flex items-center gap-3 px-4 shrink-0" style={{ height: 'var(--topbar-height)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm" style={{ background: '#C6A667', color: '#040404' }}>
           V
         </div>
         {!collapsed && (
-          <span className="text-[11px] font-semibold text-white/80 truncate" style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.25em' }}>
+          <span className="text-[11px] font-semibold truncate" style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.25em', color: 'rgba(255,255,255,0.7)' }}>
             VILLAINS
           </span>
         )}
@@ -114,8 +112,7 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
         {nav.map((group, gi) => (
           <div key={gi}>
             {group.title && !collapsed && (
-              <p className="px-3 mb-2 text-xs font-semibold uppercase tracking-wider"
-                 style={{ color: 'var(--sidebar-text)' }}>
+              <p className="px-3 mb-2 text-[10px] font-semibold uppercase" style={{ letterSpacing: '0.15em', color: 'rgba(255,255,255,0.25)' }}>
                 {group.title}
               </p>
             )}
@@ -128,20 +125,21 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
                     href={item.href}
                     title={collapsed ? item.label : undefined}
                     className={cn(
-                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
-                      isActive ? 'text-white' : 'hover:text-white'
+                      'flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150',
+                      isActive
+                        ? 'sidebar-active'
+                        : 'sidebar-inactive'
                     )}
                     style={{
-                      color: isActive ? 'var(--sidebar-text-active)' : 'var(--sidebar-text)',
-                      background: isActive ? 'var(--sidebar-active)' : 'transparent',
+                      color: isActive ? '#f5f5f5' : 'rgba(255,255,255,0.45)',
+                      background: isActive ? 'rgba(198, 166, 103, 0.12)' : 'transparent',
+                      borderLeft: isActive ? '2px solid #C6A667' : '2px solid transparent',
                     }}
-                    onMouseEnter={e => { if (!isActive) (e.target as HTMLElement).style.background = 'var(--sidebar-hover)' }}
-                    onMouseLeave={e => { if (!isActive) (e.target as HTMLElement).style.background = 'transparent' }}
                   >
                     {item.icon}
                     {!collapsed && <span className="truncate">{item.label}</span>}
                     {!collapsed && item.badge !== undefined && item.badge > 0 && (
-                      <span className="ml-auto text-xs bg-brand-500 text-white px-1.5 py-0.5 rounded-full">
+                      <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded-full" style={{ background: '#C6A667', color: '#040404' }}>
                         {item.badge}
                       </span>
                     )}
@@ -154,32 +152,31 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
       </nav>
 
       {/* Bottom: Settings + User + Logout */}
-      <div className="border-t border-white/10 px-3 py-3 space-y-1 shrink-0">
+      <div className="px-3 py-3 space-y-1 shrink-0" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
         <a
           href="/settings"
-          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors"
-          style={{ color: 'var(--sidebar-text)' }}
-          onMouseEnter={e => (e.target as HTMLElement).style.background = 'var(--sidebar-hover)'}
-          onMouseLeave={e => (e.target as HTMLElement).style.background = 'transparent'}
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150"
+          style={{ color: 'rgba(255,255,255,0.45)' }}
         >
           <Settings className="w-5 h-5" />
           {!collapsed && <span>Settings</span>}
         </a>
 
         <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: '#C6A667', color: '#0B0B0B' }}>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: '#C6A667', color: '#040404' }}>
             {displayName.split(' ').map(n => n[0]).join('').slice(0, 2)}
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-white truncate">{displayName}</p>
-              <p className="text-xs truncate" style={{ color: 'var(--sidebar-text)' }}>{roleLabel}</p>
+              <p className="text-sm font-medium truncate" style={{ color: '#f5f5f5' }}>{displayName}</p>
+              <p className="text-[11px] truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>{roleLabel}</p>
             </div>
           )}
           {!collapsed && (
             <button
               onClick={signOut}
-              className="p-1.5 rounded hover:bg-white/10 text-neutral-500 hover:text-white transition-colors"
+              className="p-1.5 rounded transition-colors duration-150"
+              style={{ color: 'rgba(255,255,255,0.3)' }}
               title="Sign out"
             >
               <LogOut className="w-4 h-4" />
@@ -191,7 +188,8 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-surface border border-border shadow-sm flex items-center justify-center text-text-tertiary hover:text-text-primary"
+        className="absolute -right-3 top-20 w-6 h-6 rounded-full flex items-center justify-center"
+        style={{ background: '#111111', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)' }}
       >
         {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
       </button>
