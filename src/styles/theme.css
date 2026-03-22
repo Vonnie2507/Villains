@@ -67,18 +67,18 @@
   --neutral-800: #d4d4d4;
   --neutral-900: #f5f5f5;
 
-  /* ── SURFACES ── Strong contrast between layers ── */
-  --surface:           #222222;
-  --surface-secondary: #111111;
-  --surface-tertiary:  #2d2d2d;
+  /* ── SURFACES ── Dark bg, lighter cards ── */
+  --surface:           #2a2a2a;
+  --surface-secondary: #181818;
+  --surface-tertiary:  #333333;
   --surface-overlay:   rgba(0, 0, 0, 0.80);
-  --surface-glass:     #2a2a2a;
+  --surface-glass:     #303030;
 
-  /* ── BORDERS ── Solid visible edges ── */
-  --border:           #333333;
-  --border-secondary: #3d3d3d;
-  --border-subtle:    #2a2a2a;
-  --border-strong:    #4a4a4a;
+  /* ── BORDERS ── */
+  --border:           #3a3a3a;
+  --border-secondary: #444444;
+  --border-subtle:    #303030;
+  --border-strong:    #505050;
   --border-focus:     #ffffff;
 
   /* ── TEXT ── White hierarchy ── */
