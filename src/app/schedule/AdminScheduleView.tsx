@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { PageHeader } from '@/components/blocks/PageHeader'
 import { StatCard, StatGrid } from '@/components/blocks/StatCard'
 import { Card } from '@/components/ui/Card'
@@ -84,8 +84,8 @@ export function AdminScheduleView() {
     dayData: ScheduleDay | null
   }>({ open: false, artist: null, date: '', sessions: [], dayData: null })
 
-  const weekDates = getWeekDates(weekStart)
-  const today = toDateString(new Date())
+  const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart])
+  const today = useMemo(() => toDateString(new Date()), [])
 
   /* ── Load data ── */
   const loadData = useCallback(async () => {
@@ -94,9 +94,10 @@ export function AdminScheduleView() {
     let startDate: string
     let endDate: string
 
+    const wd = getWeekDates(weekStart)
     if (viewMode === 'week') {
-      startDate = weekDates[0]
-      endDate = weekDates[6]
+      startDate = wd[0]
+      endDate = wd[6]
     } else if (viewMode === 'day') {
       startDate = selectedDate
       endDate = selectedDate

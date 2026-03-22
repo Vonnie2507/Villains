@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { PageHeader } from '@/components/blocks/PageHeader'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -103,8 +103,8 @@ export function ArtistScheduleView() {
   })
   const [savingLeave, setSavingLeave] = useState(false)
 
-  const weekDates = getWeekDates(weekStart)
-  const today = toDateString(new Date())
+  const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart])
+  const today = useMemo(() => toDateString(new Date()), [])
 
   /* ── Fetch artist_profile_id ── */
   useEffect(() => {
@@ -130,9 +130,10 @@ export function ArtistScheduleView() {
     let startDate: string
     let endDate: string
 
+    const wd = getWeekDates(weekStart)
     if (viewMode === 'week') {
-      startDate = weekDates[0]
-      endDate = weekDates[6]
+      startDate = wd[0]
+      endDate = wd[6]
     } else if (viewMode === 'day') {
       startDate = selectedDate
       endDate = selectedDate
