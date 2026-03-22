@@ -53,26 +53,7 @@ const ADMIN_NAV: NavGroup[] = [
   },
 ]
 
-const ARTIST_NAV: NavGroup[] = [
-  {
-    items: [
-      { id: 'dashboard',   label: 'Artist Dashboard',       href: '/dashboard',           icon: <LayoutDashboard className="w-5 h-5" /> },
-      { id: 'schedule',    label: 'My Schedule',             href: '/schedule',            icon: <Calendar className="w-5 h-5" /> },
-      { id: 'submissions', label: 'Weekly Submission',       href: '/weekly-schedules',    icon: <ClipboardList className="w-5 h-5" /> },
-      { id: 'clients',     label: 'My Clients',              href: '/clients',             icon: <Palette className="w-5 h-5" /> },
-    ]
-  },
-  {
-    title: 'Communication',
-    items: [
-      { id: 'inbox',       label: 'Artist Inbox',            href: '/inbox',               icon: <Inbox className="w-5 h-5" /> },
-      { id: 'messages',    label: 'Messages',                href: '/messages',            icon: <MessageSquare className="w-5 h-5" /> },
-    ]
-  },
-]
-
-function getNavForRole(role: UserRole | null): NavGroup[] {
-  if (role === 'artist') return ARTIST_NAV
+function getNavForRole(_role: UserRole | null): NavGroup[] {
   return ADMIN_NAV
 }
 
