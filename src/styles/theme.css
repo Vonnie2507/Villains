@@ -327,14 +327,60 @@ span[class*="rounded-full"][class*="text-xs"] {
   font-weight: 500;
 }
 
-/* ── SIDEBAR NAV ── Hover + active states ── */
+/* ── SIDEBAR ── All sidebar-specific styles in one place ── */
+.sidebar-shell {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
+}
+.sidebar-divider {
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-divider-top {
+  border-top: 1px solid var(--border);
+}
+.sidebar-logo {
+  background: var(--brand-500);
+  color: var(--text-inverse);
+}
+.sidebar-wordmark {
+  color: var(--text-secondary);
+  letter-spacing: 0.25em;
+}
+.sidebar-group-title {
+  color: var(--text-tertiary);
+  letter-spacing: 0.15em;
+}
+.sidebar-inactive {
+  color: var(--sidebar-text);
+  background: transparent;
+  border-left: 2px solid transparent;
+}
 .sidebar-inactive:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: rgba(255, 255, 255, 0.75) !important;
+  background: var(--sidebar-hover) !important;
+  color: var(--sidebar-text-active) !important;
 }
 .sidebar-active {
-  background: rgba(198, 166, 103, 0.12) !important;
-  color: #f5f5f5 !important;
+  background: var(--sidebar-active) !important;
+  color: var(--sidebar-text-active) !important;
+  border-left: 2px solid var(--brand-500);
+}
+.sidebar-badge {
+  background: var(--brand-500);
+  color: var(--text-inverse);
+}
+
+/* ── TOPBAR ── */
+.topbar-glass {
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+}
+.topbar-search {
+  background: var(--surface-glass);
+  border: 1px solid var(--border);
+}
+.topbar-kbd {
+  background: var(--surface-glass);
+  color: var(--text-tertiary);
 }
 
 /* ── CARD HOVER ── Lift effect ── */
