@@ -19,29 +19,29 @@
 }
 
 :root {
-  /* ── BRAND ── Warm Gold on near-black ── */
+  /* ── BRAND ── Monochrome white on black ── */
   --brand-50:  rgba(255, 255, 255, 0.04);
   --brand-100: rgba(255, 255, 255, 0.06);
-  --brand-200: rgba(255, 255, 255, 0.08);
-  --brand-300: rgba(255, 255, 255, 0.12);
-  --brand-400: #a08850;
-  --brand-500: #C6A667;
-  --brand-600: #b89650;
-  --brand-700: #a08850;
-  --brand-800: #7a6838;
-  --brand-900: #f5e6c8;
+  --brand-200: rgba(255, 255, 255, 0.10);
+  --brand-300: rgba(255, 255, 255, 0.15);
+  --brand-400: #cccccc;
+  --brand-500: #ffffff;
+  --brand-600: #e0e0e0;
+  --brand-700: #cccccc;
+  --brand-800: #999999;
+  --brand-900: #333333;
 
-  /* ── SECONDARY ── Muted warm ── */
+  /* ── SECONDARY ── Grey tones ── */
   --secondary-50:  rgba(255, 255, 255, 0.02);
   --secondary-100: rgba(255, 255, 255, 0.04);
   --secondary-200: rgba(255, 255, 255, 0.06);
   --secondary-300: rgba(255, 255, 255, 0.08);
   --secondary-400: rgba(255, 255, 255, 0.12);
-  --secondary-500: #9F7F4F;
-  --secondary-600: #8a6e42;
-  --secondary-700: #705a36;
-  --secondary-800: #57462a;
-  --secondary-900: #e8d5b5;
+  --secondary-500: #888888;
+  --secondary-600: #777777;
+  --secondary-700: #666666;
+  --secondary-800: #555555;
+  --secondary-900: #dddddd;
 
   /* ── ACCENT ── Crimson for danger only ── */
   --accent-50:  rgba(239, 68, 68, 0.06);
@@ -75,11 +75,11 @@
   --surface-glass:     rgba(255, 255, 255, 0.04);
 
   /* ── BORDERS ── Ultra-subtle white opacity ── */
-  --border:           rgba(255, 255, 255, 0.08);
-  --border-secondary: rgba(255, 255, 255, 0.12);
-  --border-subtle:    rgba(255, 255, 255, 0.04);
-  --border-strong:    rgba(255, 255, 255, 0.18);
-  --border-focus:     var(--brand-500);
+  --border:           rgba(255, 255, 255, 0.10);
+  --border-secondary: rgba(255, 255, 255, 0.15);
+  --border-subtle:    rgba(255, 255, 255, 0.05);
+  --border-strong:    rgba(255, 255, 255, 0.20);
+  --border-focus:     #ffffff;
 
   /* ── TEXT ── White hierarchy ── */
   --text-primary:   #f5f5f5;
@@ -159,8 +159,8 @@
   --sidebar-bg: #040404;
   --sidebar-text: rgba(255, 255, 255, 0.40);
   --sidebar-text-active: #f5f5f5;
-  --sidebar-hover: rgba(255, 255, 255, 0.04);
-  --sidebar-active: rgba(198, 166, 103, 0.12);
+  --sidebar-hover: rgba(255, 255, 255, 0.06);
+  --sidebar-active: rgba(255, 255, 255, 0.10);
 
   --topbar-height: 56px;
   --topbar-bg: rgba(4, 4, 4, 0.85);
@@ -171,9 +171,9 @@
   --section-gap: 1.5rem;
 
   /* ── THEME-SPECIFIC ── */
-  --focus-ring: rgba(198, 166, 103, 0.08);
-  --input-focus-bg: rgba(255, 255, 255, 0.05);
-  --row-hover: rgba(255, 255, 255, 0.03);
+  --focus-ring: rgba(255, 255, 255, 0.12);
+  --input-focus-bg: rgba(255, 255, 255, 0.06);
+  --row-hover: rgba(255, 255, 255, 0.04);
 }
 
 /* ── BASE ── */
@@ -259,18 +259,17 @@ button, input, select, textarea {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ── BUTTONS ── Gold primary with dark text ── */
+/* ── BUTTONS ── White primary on dark, blue on light ── */
 .bg-brand-600 {
-  background: linear-gradient(135deg, #C6A667 0%, #a88a4f 100%);
-  color: #040404;
+  background: var(--brand-600);
+  color: var(--text-inverse);
   font-weight: 600;
   letter-spacing: 0.02em;
   border: none;
 }
 .bg-brand-600:hover {
-  background: linear-gradient(135deg, #d4b878 0%, #C6A667 100%);
+  background: var(--brand-500);
   transform: translateY(-1px);
-  box-shadow: 0 8px 24px rgba(198, 166, 103, 0.15);
 }
 
 /* ── AVATAR CIRCLES ── */
