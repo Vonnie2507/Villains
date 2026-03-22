@@ -7,9 +7,9 @@ import { Card } from '@/components/ui/Card'
 export default function ClientsPage() {
   return (
     <DashboardLayout activePath="/clients">
-      <PageHeader title="My Clients" description="View and manage your client list." />
+      <PageHeader title="My Clients & Leads" description="Manage your client relationships and bookings" />
       <Card>
-        <p className="text-center text-text-secondary py-8">Coming soon — Phase 1B</p>
+        <p className="text-center text-text-secondary py-8">Coming soon</p>
       </Card>
     </DashboardLayout>
   )

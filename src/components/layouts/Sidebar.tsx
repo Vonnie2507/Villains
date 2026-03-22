@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import {
-  LayoutDashboard, Calendar, DollarSign, Users, MessageSquare,
-  Settings, ChevronLeft, ChevronRight, LogOut, Inbox,
-  UserCircle, ClipboardList, AlertTriangle, Palette
+  LayoutDashboard, Calendar, ClipboardList, Inbox, Users, MessageSquare,
+  Settings, ChevronLeft, ChevronRight, LogOut, Palette, AlertTriangle,
+  Package, ShoppingCart, FileText, DollarSign, CheckSquare, Receipt
 } from 'lucide-react'
 import type { UserRole } from '@/types'
 
@@ -27,18 +27,28 @@ interface NavGroup {
 const ADMIN_NAV: NavGroup[] = [
   {
     items: [
-      { id: 'dashboard', label: 'Dashboard',    href: '/dashboard',  icon: <LayoutDashboard className="w-5 h-5" /> },
-      { id: 'schedule',  label: 'Schedule',     href: '/schedule',   icon: <Calendar className="w-5 h-5" /> },
-      { id: 'payments',  label: 'Payments',     href: '/payments',   icon: <DollarSign className="w-5 h-5" /> },
-      { id: 'enquiries', label: 'Enquiries',    href: '/enquiries',  icon: <Inbox className="w-5 h-5" /> },
+      { id: 'dashboard',   label: 'Dashboard',             href: '/dashboard',           icon: <LayoutDashboard className="w-5 h-5" /> },
+      { id: 'enquiries',   label: 'Enquiries & Handoffs',  href: '/enquiries',           icon: <Inbox className="w-5 h-5" /> },
+      { id: 'studio-inbox',label: 'Studio Inbox',           href: '/studio-inbox',        icon: <MessageSquare className="w-5 h-5" /> },
+      { id: 'schedule',    label: 'Studio Calendar',        href: '/schedule',            icon: <Calendar className="w-5 h-5" /> },
     ]
   },
   {
     title: 'Studio',
     items: [
-      { id: 'team',      label: 'Team',         href: '/team',       icon: <Users className="w-5 h-5" /> },
-      { id: 'messages',  label: 'Messages',     href: '/messages',   icon: <MessageSquare className="w-5 h-5" /> },
-      { id: 'incidents', label: 'Incidents',     href: '/incidents',  icon: <AlertTriangle className="w-5 h-5" /> },
+      { id: 'team',        label: 'Staff Management',       href: '/team',                icon: <Users className="w-5 h-5" /> },
+      { id: 'submissions', label: 'Weekly Schedules',        href: '/weekly-schedules',    icon: <ClipboardList className="w-5 h-5" /> },
+      { id: 'tasks',       label: 'Tasks & Roster',          href: '/tasks',               icon: <CheckSquare className="w-5 h-5" /> },
+      { id: 'incidents',   label: 'Incidents',               href: '/incidents',           icon: <AlertTriangle className="w-5 h-5" /> },
+    ]
+  },
+  {
+    title: 'Finance & Inventory',
+    items: [
+      { id: 'finance',     label: 'Finance & Transactions',  href: '/finance',             icon: <DollarSign className="w-5 h-5" /> },
+      { id: 'products',    label: 'Products & Inventory',    href: '/products',            icon: <Package className="w-5 h-5" /> },
+      { id: 'pos',         label: 'POS / Shop',              href: '/pos',                 icon: <ShoppingCart className="w-5 h-5" /> },
+      { id: 'orders',      label: 'Purchase Orders',         href: '/purchase-orders',     icon: <FileText className="w-5 h-5" /> },
     ]
   },
 ]
@@ -47,17 +57,17 @@ const ADMIN_NAV: NavGroup[] = [
 const ARTIST_NAV: NavGroup[] = [
   {
     items: [
-      { id: 'dashboard', label: 'Dashboard',    href: '/dashboard',  icon: <LayoutDashboard className="w-5 h-5" /> },
-      { id: 'schedule',  label: 'My Schedule',  href: '/schedule',   icon: <Calendar className="w-5 h-5" /> },
-      { id: 'payments',  label: 'Payments',     href: '/payments',   icon: <DollarSign className="w-5 h-5" /> },
-      { id: 'clients',   label: 'My Clients',   href: '/clients',    icon: <Palette className="w-5 h-5" /> },
+      { id: 'dashboard',   label: 'Artist Dashboard',       href: '/dashboard',           icon: <LayoutDashboard className="w-5 h-5" /> },
+      { id: 'schedule',    label: 'My Schedule',             href: '/schedule',            icon: <Calendar className="w-5 h-5" /> },
+      { id: 'submissions', label: 'Weekly Submission',       href: '/weekly-schedules',    icon: <ClipboardList className="w-5 h-5" /> },
+      { id: 'clients',     label: 'My Clients',              href: '/clients',             icon: <Palette className="w-5 h-5" /> },
     ]
   },
   {
     title: 'Communication',
     items: [
-      { id: 'bookings',  label: 'Bookings',     href: '/bookings',   icon: <ClipboardList className="w-5 h-5" /> },
-      { id: 'messages',  label: 'Messages',     href: '/messages',   icon: <MessageSquare className="w-5 h-5" /> },
+      { id: 'inbox',       label: 'Artist Inbox',            href: '/inbox',               icon: <Inbox className="w-5 h-5" /> },
+      { id: 'messages',    label: 'Messages',                href: '/messages',            icon: <MessageSquare className="w-5 h-5" /> },
     ]
   },
 ]
@@ -94,7 +104,7 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
         </div>
         {!collapsed && (
           <span className="text-sm font-semibold text-white truncate" style={{ fontFamily: 'var(--font-display)' }}>
-            Villains Tattoo
+            Villains Studio Hub
           </span>
         )}
       </div>
@@ -156,7 +166,6 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
           {!collapsed && <span>Settings</span>}
         </a>
 
-        {/* User */}
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
             {displayName.split(' ').map(n => n[0]).join('').slice(0, 2)}

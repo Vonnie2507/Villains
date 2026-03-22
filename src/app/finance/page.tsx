@@ -4,10 +4,10 @@ import { DashboardLayout } from '@/components/layouts/DashboardLayout'
 import { PageHeader } from '@/components/blocks/PageHeader'
 import { Card } from '@/components/ui/Card'
 
-export default function IncidentsPage() {
+export default function FinancePage() {
   return (
-    <DashboardLayout activePath="/incidents">
-      <PageHeader title="Incidents" />
+    <DashboardLayout activePath="/finance">
+      <PageHeader title="Finance & Transactions" description="Studio spend tracking, till balancing, and receipts" />
       <Card>
         <p className="text-center text-text-secondary py-8">Coming soon</p>
       </Card>

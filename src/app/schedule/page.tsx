@@ -6,11 +6,11 @@ import { ArtistScheduleView } from './ArtistScheduleView'
 import { AdminScheduleView } from './AdminScheduleView'
 
 export default function SchedulePage() {
-  const { isAdmin, isArtist } = useAuth()
+  const { isAdmin } = useAuth()
 
   return (
     <DashboardLayout activePath="/schedule">
-      {isArtist ? <ArtistScheduleView /> : <AdminScheduleView />}
+      {isAdmin ? <AdminScheduleView /> : <ArtistScheduleView />}
     </DashboardLayout>
   )
 }
