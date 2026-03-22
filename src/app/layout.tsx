@@ -4,12 +4,30 @@ import '@/styles/theme.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ToastProvider } from '@/contexts/ToastContext'
 
+// Inline script to prevent flash of wrong theme on load
+const themeScript = `
+(function() {
+  try {
+    var mode = localStorage.getItem('villains-theme') || 'dark';
+    var resolved = mode;
+    if (mode === 'system') {
+      resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.classList.add(resolved);
+    document.documentElement.setAttribute('data-theme', resolved);
+  } catch(e) {
+    document.documentElement.classList.add('dark');
+  }
+})();
+`
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <title>Villains Studio Hub</title>
         <meta name="description" content="Studio management hub for Villains Tattoo" />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

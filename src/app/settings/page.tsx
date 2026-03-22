@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/Button'
 import { FileUpload } from '@/components/blocks/FileUpload'
 import { Building, User, Bell, Palette, Shield, CreditCard } from 'lucide-react'
 import { useState } from 'react'
+import { useTheme } from '@/hooks/useTheme'
+import type { ThemeMode } from '@/hooks/useTheme'
 
 const TABS = [
   { id: 'company', label: 'Company', icon: <Building className="w-4 h-4" /> },
@@ -26,6 +28,7 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('company')
   const [emailNotifs, setEmailNotifs] = useState(true)
   const [smsNotifs, setSmsNotifs] = useState(false)
+  const { mode, setMode } = useTheme()
 
   return (
     <DashboardLayout activePath="/settings">
@@ -107,15 +110,16 @@ export default function SettingsPage() {
 
         {activeTab === 'appearance' && (
           <FormPanel title="Appearance" description="Customise how the app looks">
-            <FormRow label="Theme" description="Choose light or dark mode">
-              <Select options={[
-                { value: 'light', label: 'Light' },
-                { value: 'dark', label: 'Dark' },
-                { value: 'system', label: 'System' },
-              ]} />
-            </FormRow>
-            <FormRow label="Brand Colour" description="Change theme.css to update globally">
-              <Input type="color" defaultValue="#3b82f6" className="h-10 w-20" />
+            <FormRow label="Theme" description="Choose light or dark mode. Changes apply instantly.">
+              <Select
+                options={[
+                  { value: 'dark', label: 'Dark' },
+                  { value: 'light', label: 'Light' },
+                  { value: 'system', label: 'System' },
+                ]}
+                value={mode}
+                onChange={e => setMode(e.target.value as ThemeMode)}
+              />
             </FormRow>
           </FormPanel>
         )}
