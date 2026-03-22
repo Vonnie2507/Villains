@@ -8,8 +8,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
-        <title>Villains Tattoo Studio</title>
-        <meta name="description" content="Studio management for Villains Tattoo" />
+        <title>Villains Studio Hub</title>
+        <meta name="description" content="Studio management hub for Villains Tattoo" />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
           rel="stylesheet"
