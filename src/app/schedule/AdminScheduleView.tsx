@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { PageHeader } from '@/components/blocks/PageHeader'
 import { StatCard, StatGrid } from '@/components/blocks/StatCard'
 import { Card } from '@/components/ui/Card'
@@ -87,76 +87,80 @@ export function AdminScheduleView() {
   const weekDates = useMemo(() => getWeekDates(weekStart), [weekStart])
   const today = useMemo(() => toDateString(new Date()), [])
 
-  /* ── Load data ── */
-  const loadData = useCallback(async () => {
-    setLoading(true)
-
-    let startDate: string
-    let endDate: string
-
-    const wd = getWeekDates(weekStart)
-    if (viewMode === 'week') {
-      startDate = wd[0]
-      endDate = wd[6]
-    } else if (viewMode === 'day') {
-      startDate = selectedDate
-      endDate = selectedDate
-    } else {
-      const first = new Date(monthYear.year, monthYear.month, 1)
-      const last = new Date(monthYear.year, monthYear.month + 1, 0)
-      startDate = toDateString(first)
-      endDate = toDateString(last)
-    }
-
-    const { data: artists } = await supabase
-      .from('artist_profiles')
-      .select('*, profile:profiles!artist_profiles_user_id_fkey(*)')
-      .order('display_name')
-
-    const [daysRes, sessionsRes] = await Promise.all([
-      supabase
-        .from('schedule_days')
-        .select('*')
-        .gte('date', startDate)
-        .lte('date', endDate)
-        .order('date'),
-      supabase
-        .from('sessions')
-        .select('*')
-        .gte('date', startDate)
-        .lte('date', endDate)
-        .order('start_time'),
-    ])
-
-    const allDays = (daysRes.data as ScheduleDay[]) || []
-    const allSessions = (sessionsRes.data as Session[]) || []
-
-    const daysByArtist = new Map<string, Map<string, ScheduleDay>>()
-    for (const d of allDays) {
-      if (!daysByArtist.has(d.artist_id)) daysByArtist.set(d.artist_id, new Map())
-      daysByArtist.get(d.artist_id)!.set(d.date, d)
-    }
-
-    const sessionsByArtist = new Map<string, Session[]>()
-    for (const s of allSessions) {
-      if (!sessionsByArtist.has(s.artist_id)) sessionsByArtist.set(s.artist_id, [])
-      sessionsByArtist.get(s.artist_id)!.push(s)
-    }
-
-    const rows: ArtistRow[] = ((artists as ArtistProfile[]) || []).map(artist => ({
-      artist,
-      scheduleDays: daysByArtist.get(artist.id) || new Map(),
-      sessions: sessionsByArtist.get(artist.id) || [],
-    }))
-
-    setArtistRows(rows)
-    setLoading(false)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewMode, weekStart, selectedDate, monthYear.year, monthYear.month])
-
+  /* ── Load data — simple useEffect, no useCallback loop ── */
   useEffect(() => {
-    loadData()
-  }, [loadData])
+    let cancelled = false
+
+    async function fetchData() {
+      setLoading(true)
+
+      let startDate: string
+      let endDate: string
+
+      const wd = getWeekDates(weekStart)
+      if (viewMode === 'week') {
+        startDate = wd[0]
+        endDate = wd[6]
+      } else if (viewMode === 'day') {
+        startDate = selectedDate
+        endDate = selectedDate
+      } else {
+        const first = new Date(monthYear.year, monthYear.month, 1)
+        const last = new Date(monthYear.year, monthYear.month + 1, 0)
+        startDate = toDateString(first)
+        endDate = toDateString(last)
+      }
+
+      const { data: artists } = await supabase
+        .from('artist_profiles')
+        .select('*, profile:profiles!artist_profiles_user_id_fkey(*)')
+        .order('display_name')
+
+      const [daysRes, sessionsRes] = await Promise.all([
+        supabase
+          .from('schedule_days')
+          .select('*')
+          .gte('date', startDate)
+          .lte('date', endDate)
+          .order('date'),
+        supabase
+          .from('sessions')
+          .select('*')
+          .gte('date', startDate)
+          .lte('date', endDate)
+          .order('start_time'),
+      ])
+
+      if (cancelled) return
+
+      const allDays = (daysRes.data as ScheduleDay[]) || []
+      const allSessions = (sessionsRes.data as Session[]) || []
+
+      const daysByArtist = new Map<string, Map<string, ScheduleDay>>()
+      for (const d of allDays) {
+        if (!daysByArtist.has(d.artist_id)) daysByArtist.set(d.artist_id, new Map())
+        daysByArtist.get(d.artist_id)!.set(d.date, d)
+      }
+
+      const sessionsByArtist = new Map<string, Session[]>()
+      for (const s of allSessions) {
+        if (!sessionsByArtist.has(s.artist_id)) sessionsByArtist.set(s.artist_id, [])
+        sessionsByArtist.get(s.artist_id)!.push(s)
+      }
+
+      const rows: ArtistRow[] = ((artists as ArtistProfile[]) || []).map(artist => ({
+        artist,
+        scheduleDays: daysByArtist.get(artist.id) || new Map(),
+        sessions: sessionsByArtist.get(artist.id) || [],
+      }))
+
+      setArtistRows(rows)
+      setLoading(false)
+    }
+
+    fetchData()
+    return () => { cancelled = true }
+  }, [viewMode, weekStart, selectedDate, monthYear.year, monthYear.month])
 
   /* ── Open detail modal ── */
   function openDetail(artist: ArtistProfile, date: string, dayData: ScheduleDay | null, artistSessions: Session[]) {

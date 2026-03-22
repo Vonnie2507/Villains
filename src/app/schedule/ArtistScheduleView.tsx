@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { PageHeader } from '@/components/blocks/PageHeader'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -122,8 +122,8 @@ export function ArtistScheduleView() {
     fetchArtistProfile()
   }, [user])
 
-  /* ── Load schedule_days + sessions for visible range ── */
-  const loadData = useCallback(async () => {
+  /* ── Fetch function (called by useEffect and handlers) ── */
+  async function loadData() {
     if (!artistProfileId) return
     setLoading(true)
 
@@ -138,7 +138,6 @@ export function ArtistScheduleView() {
       startDate = selectedDate
       endDate = selectedDate
     } else {
-      // month
       const first = new Date(monthYear.year, monthYear.month, 1)
       const last = new Date(monthYear.year, monthYear.month + 1, 0)
       startDate = toDateString(first)
@@ -171,12 +170,66 @@ export function ArtistScheduleView() {
     setScheduleDays(dayMap)
     setSessions((sessionsRes.data as Session[]) || [])
     setLoading(false)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [artistProfileId, viewMode, weekStart, selectedDate, monthYear.year, monthYear.month])
+  }
 
+  /* ── Auto-load on dependency changes ── */
   useEffect(() => {
-    loadData()
-  }, [loadData])
+    if (!artistProfileId) return
+    let cancelled = false
+
+    async function fetchData() {
+      setLoading(true)
+
+      let startDate: string
+      let endDate: string
+
+      const wd = getWeekDates(weekStart)
+      if (viewMode === 'week') {
+        startDate = wd[0]
+        endDate = wd[6]
+      } else if (viewMode === 'day') {
+        startDate = selectedDate
+        endDate = selectedDate
+      } else {
+        const first = new Date(monthYear.year, monthYear.month, 1)
+        const last = new Date(monthYear.year, monthYear.month + 1, 0)
+        startDate = toDateString(first)
+        endDate = toDateString(last)
+      }
+
+      const [daysRes, sessionsRes] = await Promise.all([
+        supabase
+          .from('schedule_days')
+          .select('*')
+          .eq('artist_id', artistProfileId)
+          .gte('date', startDate)
+          .lte('date', endDate)
+          .order('date'),
+        supabase
+          .from('sessions')
+          .select('*')
+          .eq('artist_id', artistProfileId)
+          .gte('date', startDate)
+          .lte('date', endDate)
+          .order('start_time'),
+      ])
+
+      if (cancelled) return
+
+      const dayMap = new Map<string, ScheduleDay>()
+      if (daysRes.data) {
+        for (const d of daysRes.data as ScheduleDay[]) {
+          dayMap.set(d.date, d)
+        }
+      }
+      setScheduleDays(dayMap)
+      setSessions((sessionsRes.data as Session[]) || [])
+      setLoading(false)
+    }
+
+    fetchData()
+    return () => { cancelled = true }
+  }, [artistProfileId, viewMode, weekStart, selectedDate, monthYear.year, monthYear.month])
 
   /* ── Status upsert ── */
   async function handleStatusChange(date: string, status: ScheduleDayStatus) {
