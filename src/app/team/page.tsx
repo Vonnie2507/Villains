@@ -17,13 +17,15 @@ import { Palette, Mail, Phone, UserPlus, Eye, UserX, Pencil, Instagram } from 'l
 
 type StaffMember = Profile & { artist_profiles?: ArtistProfile[]; staff_records?: StaffRecord[] }
 
-function generateTempPassword(): string {
-  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789'
-  let password = ''
-  for (let i = 0; i < 12; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-  return password
+import { createClient } from '@supabase/supabase-js'
+
+// Separate client for invite — prevents logging out current user
+function createInviteClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { auth: { persistSession: false, autoRefreshToken: false } }
+  )
 }
 
 export default function TeamPage() {
@@ -43,6 +45,7 @@ export default function TeamPage() {
     display_name: '',
     seat: '',
     instagram: '',
+    password: '',
   })
 
   // Detail modal state
@@ -90,15 +93,21 @@ export default function TeamPage() {
       toast.error('Email and Full Name are required')
       return
     }
+    if (!inviteForm.password || inviteForm.password.length < 6) {
+      toast.error('Password must be at least 6 characters')
+      return
+    }
 
     setInviteLoading(true)
-    const tempPassword = generateTempPassword()
 
     try {
-      // 1. Create the auth user via signUp
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      // Use a separate client so we don't log out the current admin
+      const inviteClient = createInviteClient()
+
+      // 1. Create the auth user
+      const { data: signUpData, error: signUpError } = await inviteClient.auth.signUp({
         email: inviteForm.email,
-        password: tempPassword,
+        password: inviteForm.password,
         options: {
           data: {
             full_name: inviteForm.full_name,
@@ -108,7 +117,7 @@ export default function TeamPage() {
       })
 
       if (signUpError) {
-        toast.error(`Sign up failed: ${signUpError.message}`)
+        toast.error(`Failed: ${signUpError.message}`)
         setInviteLoading(false)
         return
       }
@@ -120,11 +129,11 @@ export default function TeamPage() {
         return
       }
 
-      // 2. Wait a moment for the trigger to create the profile row, then update it
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // 2. Wait for the trigger to create the profile row
+      await new Promise(resolve => setTimeout(resolve, 1500))
 
-      // Update the profile with the correct role and display name
-      const { error: profileError } = await supabase
+      // Update the profile with correct role
+      await supabase
         .from('profiles')
         .update({
           full_name: inviteForm.full_name,
@@ -134,15 +143,9 @@ export default function TeamPage() {
         })
         .eq('id', newUserId)
 
-      if (profileError) {
-        console.error('Profile update error:', profileError)
-        // Profile might not exist yet if the trigger hasn't fired — try inserting
-        toast.warning('Profile trigger may not have fired. Check Supabase dashboard.')
-      }
-
       // 3. If artist, create artist_profiles row
       if (inviteRole === 'artist') {
-        const { error: artistError } = await supabase
+        await supabase
           .from('artist_profiles')
           .insert({
             user_id: newUserId,
@@ -152,21 +155,19 @@ export default function TeamPage() {
             specialties: [],
             default_working_days: {},
           })
-
-        if (artistError) {
-          console.error('Artist profile error:', artistError)
-          toast.warning('Artist profile could not be created — check Supabase.')
-        }
       }
+
+      // Sign out the invite client session (cleanup)
+      await inviteClient.auth.signOut()
 
       // Success
       toast.success(
-        `${inviteRole === 'artist' ? 'Artist' : 'Reception staff'} invited! Temp password: ${tempPassword}`
+        `${inviteRole === 'artist' ? 'Artist' : 'Staff'} created! They can log in with: ${inviteForm.email}`
       )
-      toast.info(`Tell ${inviteForm.full_name} to sign in with: ${inviteForm.email} / ${tempPassword}`)
+      toast.info(`Tell ${inviteForm.full_name} to sign in with: ${inviteForm.email}`)
 
       // Reset and close
-      setInviteForm({ email: '', full_name: '', display_name: '', seat: '', instagram: '' })
+      setInviteForm({ email: '', full_name: '', display_name: '', seat: '', instagram: '', password: '' })
       setInviteOpen(false)
       await loadStaff()
     } catch (err) {
@@ -319,13 +320,13 @@ export default function TeamPage() {
   // ── Invite modal opener helpers ──
   function openInviteArtist() {
     setInviteRole('artist')
-    setInviteForm({ email: '', full_name: '', display_name: '', seat: '', instagram: '' })
+    setInviteForm({ email: '', full_name: '', display_name: '', seat: '', instagram: '', password: '' })
     setInviteOpen(true)
   }
 
   function openInviteReception() {
     setInviteRole('admin')
-    setInviteForm({ email: '', full_name: '', display_name: '', seat: '', instagram: '' })
+    setInviteForm({ email: '', full_name: '', display_name: '', seat: '', instagram: '', password: '' })
     setInviteOpen(true)
   }
 
@@ -446,9 +447,18 @@ export default function TeamPage() {
             </>
           )}
 
+          <Input
+            label="Password"
+            type="password"
+            placeholder="Set a password for them (min 6 characters)"
+            value={inviteForm.password}
+            onChange={(e) => setInviteForm(f => ({ ...f, password: e.target.value }))}
+            hint="Give this to the artist so they can log in"
+          />
+
           <div className="p-3 rounded-xl bg-surface-tertiary border border-border text-xs text-text-secondary">
-            A temporary password will be generated. You will need to give it to the{' '}
-            {inviteRole === 'artist' ? 'artist' : 'staff member'} so they can sign in and change it.
+            The {inviteRole === 'artist' ? 'artist' : 'staff member'} will log in with their email and this password.
+            They can change it later in Settings.
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
