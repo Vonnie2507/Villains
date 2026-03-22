@@ -229,9 +229,9 @@ h1, h2, h3, h4 {
   outline-offset: 2px;
 }
 
-/* ── TRANSITIONS ── */
-button, a, input, select, textarea {
-  transition: all var(--transition-fast);
+/* ── TRANSITIONS ── Only visual properties, never block navigation ── */
+button, input, select, textarea {
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast), opacity var(--transition-fast);
 }
 
 /* ── GLASS ── */

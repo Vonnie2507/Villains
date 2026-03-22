@@ -120,7 +120,7 @@ export function Sidebar({ activePath = '/dashboard' }: { activePath?: string }) 
                     href={item.href}
                     title={collapsed ? item.label : undefined}
                     className={cn(
-                      'flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150',
+                      'flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors duration-150',
                       isActive ? 'sidebar-active' : 'sidebar-inactive'
                     )}
                   >
@@ -143,7 +143,7 @@ export function Sidebar({ activePath = '/dashboard' }: { activePath?: string }) 
       <div className="px-3 py-3 space-y-1 shrink-0 sidebar-divider-top">
         <a
           href="/settings"
-          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium sidebar-inactive transition-all duration-150"
+          className="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium sidebar-inactive transition-colors duration-150"
         >
           <Settings className="w-5 h-5" />
           {!collapsed && <span>Settings</span>}

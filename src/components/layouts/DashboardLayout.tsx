@@ -25,7 +25,7 @@ export function DashboardLayout({ children, activePath }: DashboardLayoutProps) 
     <div className="min-h-screen bg-surface-secondary">
       <Sidebar activePath={activePath} />
 
-      <div className="lg:ml-[var(--sidebar-width)] transition-all duration-200">
+      <div className="lg:ml-[var(--sidebar-width)]">
         <Topbar />
         <main className="p-[var(--page-padding)]">
           {children}
