@@ -55,7 +55,7 @@ export function Topbar({ onMenuClick, notifications = 0 }: TopbarProps) {
         <Dropdown
           trigger={
             <button className="p-2 rounded hover:bg-surface-tertiary text-text-secondary">
-              <div className="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center text-xs font-bold">
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ background: '#C6A667', color: '#0B0B0B' }}>
                 {initials}
               </div>
             </button>

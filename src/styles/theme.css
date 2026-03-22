@@ -1,6 +1,9 @@
 /*
   ============================================================
-  VILLAINS TATTOO STUDIO — Dark theme with villain red accents
+  VILLAINS STUDIO HUB — Premium dark tattoo studio theme
+  ============================================================
+  Near-black backgrounds, warm gold accents, cinematic feel.
+  Inspired by premium tattoo shop websites.
   ============================================================
 */
 
@@ -8,133 +11,141 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+}
+
 :root {
-  /* ── BRAND COLOURS ── Villain Red ── */
-  --brand-50:  #2a1015;
-  --brand-100: #3d1520;
-  --brand-200: #5c1e30;
-  --brand-300: #8b2a45;
-  --brand-400: #c23858;
-  --brand-500: #e94560;   /* ← Primary villain red */
-  --brand-600: #c81d45;
-  --brand-700: #a01535;
-  --brand-800: #7d1028;
-  --brand-900: #fce4ec;
+  /* ── BRAND ── Warm Gold ── */
+  --brand-50:  #1c1a14;
+  --brand-100: #2e2a1e;
+  --brand-200: #4a3f28;
+  --brand-300: #7a6a3e;
+  --brand-400: #b89650;
+  --brand-500: #C6A667;   /* ← Primary warm gold */
+  --brand-600: #a88a4f;
+  --brand-700: #8a6f3a;
+  --brand-800: #6b5528;
+  --brand-900: #f5e6c8;
 
-  /* ── SECONDARY COLOURS ── Midnight Blue ── */
-  --secondary-50:  #0a0e1a;
-  --secondary-100: #0f1a30;
-  --secondary-200: #142040;
-  --secondary-300: #1a2d55;
-  --secondary-400: #1f3a6b;
-  --secondary-500: #0f3460;
-  --secondary-600: #0c2a50;
-  --secondary-700: #092040;
-  --secondary-800: #061630;
-  --secondary-900: #c8d6e5;
+  /* ── SECONDARY ── Deep muted gold ── */
+  --secondary-50:  #151310;
+  --secondary-100: #1f1c16;
+  --secondary-200: #2e2920;
+  --secondary-300: #4a4030;
+  --secondary-400: #6b5d45;
+  --secondary-500: #9F7F4F;
+  --secondary-600: #8a6e42;
+  --secondary-700: #705a36;
+  --secondary-800: #57462a;
+  --secondary-900: #e8d5b5;
 
-  /* ── ACCENT COLOURS ── Gold highlights ── */
-  --accent-50:  #1a1508;
-  --accent-100: #2d2410;
-  --accent-200: #4d3d1a;
-  --accent-300: #7a6229;
-  --accent-400: #b8933d;
-  --accent-500: #d4a94e;
-  --accent-600: #c49a40;
-  --accent-700: #a07d32;
-  --accent-800: #7c6026;
-  --accent-900: #fdf2d0;
+  /* ── ACCENT ── Crimson for danger/emphasis only ── */
+  --accent-50:  #1a0a0a;
+  --accent-100: #2d1212;
+  --accent-200: #4d1e1e;
+  --accent-300: #7a2e2e;
+  --accent-400: #b84040;
+  --accent-500: #DC2626;
+  --accent-600: #b91c1c;
+  --accent-700: #991b1b;
+  --accent-800: #7f1d1d;
+  --accent-900: #fecaca;
 
-  /* ── NEUTRAL ── Dark greys ── */
-  --neutral-50:  #0a0a12;
-  --neutral-100: #12121e;
-  --neutral-200: #1e1e2e;
-  --neutral-300: #2a2a3e;
-  --neutral-400: #4a4a60;
-  --neutral-500: #6b6b80;
-  --neutral-600: #8888a0;
-  --neutral-700: #a0a0b8;
-  --neutral-800: #c8c8d8;
-  --neutral-900: #e8e8f0;
+  /* ── NEUTRAL ── True dark greys ── */
+  --neutral-50:  #0B0B0B;
+  --neutral-100: #111111;
+  --neutral-200: #1a1a1a;
+  --neutral-300: #2A2A2A;
+  --neutral-400: #404040;
+  --neutral-500: #5a5a5a;
+  --neutral-600: #808080;
+  --neutral-700: #a0a0a0;
+  --neutral-800: #CFCFCF;
+  --neutral-900: #f0f0f0;
 
-  /* ── SURFACES ── Dark backgrounds ── */
-  --surface:           #1a1a2e;
-  --surface-secondary: #12121e;
-  --surface-tertiary:  #242440;
-  --surface-overlay:   rgba(0, 0, 0, 0.7);
-  --surface-glass:     rgba(26, 26, 46, 0.8);
+  /* ── SURFACES ── Near-black backgrounds ── */
+  --surface:           #111111;
+  --surface-secondary: #0B0B0B;
+  --surface-tertiary:  #1a1a1a;
+  --surface-overlay:   rgba(0, 0, 0, 0.75);
+  --surface-glass:     rgba(17, 17, 17, 0.85);
 
-  /* ── BORDERS ── */
-  --border:           #2a2a44;
-  --border-secondary: #3a3a55;
-  --border-subtle:    #1e1e32;
-  --border-strong:    #4a4a66;
+  /* ── BORDERS ── Subtle dark lines ── */
+  --border:           #2A2A2A;
+  --border-secondary: #333333;
+  --border-subtle:    #1a1a1a;
+  --border-strong:    #404040;
   --border-focus:     var(--brand-500);
 
-  /* ── TEXT ── Light on dark ── */
-  --text-primary:   #f1f1f5;
-  --text-secondary: #a0a0b8;
-  --text-tertiary:  #6b6b80;
-  --text-inverse:   #0a0a12;
+  /* ── TEXT ── Crisp whites and greys ── */
+  --text-primary:   #FFFFFF;
+  --text-secondary: #CFCFCF;
+  --text-tertiary:  #707070;
+  --text-inverse:   #0B0B0B;
   --text-link:      var(--brand-500);
 
-  /* ── STATUS COLOURS ── */
+  /* ── STATUS ── */
   --status-success:     #22c55e;
-  --status-success-50:  #0a2015;
+  --status-success-50:  #0a1a10;
   --status-success-700: #4ade80;
   --status-warning:     #f59e0b;
   --status-warning-50:  #1a1508;
   --status-warning-700: #fbbf24;
   --status-error:       #ef4444;
-  --status-error-50:    #200a0a;
+  --status-error-50:    #1a0a0a;
   --status-error-700:   #f87171;
   --status-info:        #3b82f6;
-  --status-info-50:     #0a1520;
+  --status-info-50:     #0a1220;
   --status-info-700:    #60a5fa;
 
-  /* ── FONTS ── */
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  /* ── FONTS ── Premium sans-serif ── */
+  --font-sans: 'DM Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Sora', 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* ── TYPOGRAPHY SCALE ── */
+  /* ── TYPOGRAPHY ── */
   --text-xs:   0.75rem;
   --text-sm:   0.875rem;
-  --text-base: 1rem;
-  --text-lg:   1.125rem;
+  --text-base: 0.9375rem;
+  --text-lg:   1.0625rem;
   --text-xl:   1.25rem;
   --text-2xl:  1.5rem;
   --text-3xl:  1.875rem;
-  --text-4xl:  2.25rem;
+  --text-4xl:  2.5rem;
 
-  --leading-tight:   1.25;
+  --leading-tight:   1.2;
   --leading-normal:  1.5;
-  --leading-relaxed: 1.75;
+  --leading-relaxed: 1.7;
 
   --font-normal:   400;
   --font-medium:   500;
   --font-semibold: 600;
   --font-bold:     700;
 
-  /* ── BORDER RADIUS ── */
-  --radius:    0.5rem;
-  --radius-sm: 0.25rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  /* ── BORDER RADIUS ── Softer, more premium ── */
+  --radius:    0.625rem;
+  --radius-sm: 0.375rem;
+  --radius-lg: 0.875rem;
+  --radius-xl: 1.25rem;
   --radius-full: 9999px;
 
-  /* ── SHADOWS ── Stronger for dark theme ── */
-  --shadow-xs:       0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-card:     0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-dropdown: 0 4px 6px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
-  --shadow-lg:       0 10px 15px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.3);
-  --shadow-modal:    0 20px 25px rgba(0, 0, 0, 0.4), 0 10px 10px rgba(0, 0, 0, 0.3);
-  --shadow-glass:    0 8px 32px rgba(0, 0, 0, 0.4);
+  /* ── SHADOWS ── Deeper, more cinematic ── */
+  --shadow-xs:       0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-card:     0 2px 8px rgba(0, 0, 0, 0.35), 0 0 1px rgba(198, 166, 103, 0.05);
+  --shadow-dropdown: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 1px rgba(198, 166, 103, 0.08);
+  --shadow-lg:       0 12px 32px rgba(0, 0, 0, 0.5), 0 0 1px rgba(198, 166, 103, 0.06);
+  --shadow-modal:    0 24px 64px rgba(0, 0, 0, 0.6), 0 0 1px rgba(198, 166, 103, 0.1);
+  --shadow-glass:    0 8px 32px rgba(0, 0, 0, 0.5);
 
-  /* ── TRANSITIONS ── */
-  --transition-fast:   150ms ease;
-  --transition-normal: 250ms ease;
-  --transition-slow:   350ms ease;
+  /* ── TRANSITIONS ── Smooth, not instant ── */
+  --transition-fast:   120ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow:   300ms cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ── Z-INDEX ── */
   --z-dropdown: 100;
@@ -146,11 +157,11 @@
   /* ── LAYOUT ── */
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 72px;
-  --sidebar-bg: #0a0a1a;
-  --sidebar-text: #8888a0;
-  --sidebar-text-active: #ffffff;
-  --sidebar-hover: rgba(233, 69, 96, 0.1);
-  --sidebar-active: var(--brand-600);
+  --sidebar-bg: #080808;
+  --sidebar-text: #707070;
+  --sidebar-text-active: #FFFFFF;
+  --sidebar-hover: rgba(198, 166, 103, 0.08);
+  --sidebar-active: rgba(198, 166, 103, 0.15);
 
   --topbar-height: 64px;
   --topbar-bg: var(--surface);
@@ -164,23 +175,36 @@
 /* ── BASE STYLES ── */
 body {
   font-family: var(--font-sans);
+  font-weight: 400;
   color: var(--text-primary);
   background: var(--surface-secondary);
+  letter-spacing: 0.01em;
+  line-height: 1.5;
 }
 
-/* ── SCROLLBAR ── Dark theme scrollbar ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+/* ── HEADINGS ── Display font with tighter tracking ── */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
 
-/* ── FOCUS RING ── Villain red focus ── */
+/* ── SCROLLBAR ── Thin and subtle ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #2A2A2A;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background: #404040; }
+
+/* ── FOCUS RING ── Gold focus for accessibility ── */
 *:focus-visible {
   outline: 2px solid var(--brand-500);
   outline-offset: 2px;
 }
 
-/* ── TRANSITIONS ── */
+/* ── TRANSITIONS ── Smooth everything ── */
 button, a, input, select, textarea {
   transition: all var(--transition-fast);
 }
@@ -188,13 +212,68 @@ button, a, input, select, textarea {
 /* ── GLASS MORPHISM ── */
 .glass {
   background: var(--surface-glass);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ── SELECTION ── Villain red selection ── */
+/* ── SELECTION ── Gold selection ── */
 ::selection {
-  background: var(--brand-300);
-  color: var(--brand-900);
+  background: rgba(198, 166, 103, 0.3);
+  color: #FFFFFF;
+}
+
+/* ── CARDS ── Subtle inner glow for depth ── */
+.bg-surface {
+  background: linear-gradient(135deg, #111111 0%, #141414 100%);
+}
+
+/* ── BUTTONS ── Override for primary gold button ── */
+.bg-brand-600 {
+  background: linear-gradient(135deg, #C6A667 0%, #a88a4f 100%);
+  color: #0B0B0B;
+  font-weight: 600;
+}
+.bg-brand-600:hover {
+  background: linear-gradient(135deg, #d4b676 0%, #C6A667 100%);
+}
+
+/* ── SIDEBAR ACTIVE ── Gold left bar accent ── */
+.bg-brand-500 {
+  background: #C6A667;
+}
+
+/* ── TABLE ROWS ── Subtle hover ── */
+tr:hover td {
+  transition: background var(--transition-fast);
+}
+
+/* ── BADGE REFINEMENT ── Slightly more padding ── */
+span[class*="rounded-full"][class*="text-xs"] {
+  letter-spacing: 0.02em;
+}
+
+/* ── INPUT FIELDS ── Cleaner dark inputs ── */
+input, select, textarea {
+  background: #0B0B0B;
+  border-color: #2A2A2A;
+  color: #FFFFFF;
+}
+input::placeholder, textarea::placeholder {
+  color: #505050;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--brand-500);
+  box-shadow: 0 0 0 3px rgba(198, 166, 103, 0.1);
+}
+
+/* ── STAT CARDS ── Subtle gradient top border ── */
+.shadow-card {
+  position: relative;
+}
+
+/* ── MODALS ── Premium overlay ── */
+.bg-surface-overlay {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
 }

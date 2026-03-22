@@ -99,12 +99,12 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-[var(--topbar-height)] border-b border-white/10 shrink-0">
-        <div className="w-8 h-8 rounded bg-brand-500 flex items-center justify-center text-white font-bold text-sm">
+        <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center font-bold text-sm" style={{ color: '#0B0B0B' }}>
           V
         </div>
         {!collapsed && (
-          <span className="text-sm font-semibold text-white truncate" style={{ fontFamily: 'var(--font-display)' }}>
-            Villains Studio Hub
+          <span className="text-sm font-semibold text-white truncate tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
+            VILLAINS
           </span>
         )}
       </div>
@@ -167,7 +167,7 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
         </a>
 
         <div className="flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0" style={{ background: '#C6A667', color: '#0B0B0B' }}>
             {displayName.split(' ').map(n => n[0]).join('').slice(0, 2)}
           </div>
           {!collapsed && (
