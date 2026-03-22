@@ -11,8 +11,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 import { supabase } from '@/lib/supabase'
 import { getWeekStart, getWeekDates, formatWeekRange, shiftWeek, isCurrentWeek } from '@/lib/dates'
-import { SCHEDULE_DAY_COLOURS, SCHEDULE_DAY_STATUS_OPTIONS, ENVELOPE_STATUS_LABELS } from '@/types'
-import type { ScheduleDay, ScheduleDayStatus, Session, ArtistProfile, EnvelopeStatus, WeeklySubmission } from '@/types'
+import { SCHEDULE_DAY_COLOURS, SCHEDULE_DAY_STATUS_OPTIONS } from '@/types'
+import type { ScheduleDay, ScheduleDayStatus, Session, ArtistProfile, WeeklySubmission } from '@/types'
 import {
   ChevronLeft, ChevronRight, Plus, X, Check, Mail,
   ClipboardCheck, AlertCircle, Trash2, CalendarDays, ArrowDownWideNarrow, Clock
