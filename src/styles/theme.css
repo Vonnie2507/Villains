@@ -67,18 +67,18 @@
   --neutral-800: #d4d4d4;
   --neutral-900: #f5f5f5;
 
-  /* ── SURFACES ── Visible contrast between layers ── */
-  --surface:           #1a1a1a;
-  --surface-secondary: #0e0e0e;
-  --surface-tertiary:  #252525;
+  /* ── SURFACES ── Strong contrast between layers ── */
+  --surface:           #222222;
+  --surface-secondary: #111111;
+  --surface-tertiary:  #2d2d2d;
   --surface-overlay:   rgba(0, 0, 0, 0.80);
-  --surface-glass:     rgba(255, 255, 255, 0.06);
+  --surface-glass:     #2a2a2a;
 
-  /* ── BORDERS ── Visible card edges ── */
-  --border:           rgba(255, 255, 255, 0.12);
-  --border-secondary: rgba(255, 255, 255, 0.18);
-  --border-subtle:    rgba(255, 255, 255, 0.06);
-  --border-strong:    rgba(255, 255, 255, 0.25);
+  /* ── BORDERS ── Solid visible edges ── */
+  --border:           #333333;
+  --border-secondary: #3d3d3d;
+  --border-subtle:    #2a2a2a;
+  --border-strong:    #4a4a4a;
   --border-focus:     #ffffff;
 
   /* ── TEXT ── White hierarchy ── */
@@ -156,7 +156,7 @@
   /* ── LAYOUT ── */
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 72px;
-  --sidebar-bg: #141414;
+  --sidebar-bg: #191919;
   --sidebar-text: rgba(255, 255, 255, 0.40);
   --sidebar-text-active: #f5f5f5;
   --sidebar-hover: rgba(255, 255, 255, 0.06);
