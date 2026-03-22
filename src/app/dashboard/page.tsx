@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/Badge'
 import { LiveClock } from '@/components/ui/LiveClock'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabase } from '@/lib/supabase'
-import { toDateString, getWeekStart } from '@/lib/dates'
+import { toDateString, getWeekStart, getWeekDates } from '@/lib/dates'
 import { SCHEDULE_DAY_COLOURS } from '@/types'
 import type { ScheduleDay, ArtistProfile, ScheduleDayStatus, Session } from '@/types'
 import { Button } from '@/components/ui/Button'
@@ -421,57 +421,122 @@ function AdminDashboard() {
 
 function ArtistDashboard() {
   const { user, profile } = useAuth()
+  const { toast } = useToast()
   const today = toDateString(new Date())
+  const weekStart = getWeekStart()
   const now = new Date()
   const dayName = now.toLocaleDateString('en-AU', { weekday: 'long' })
   const dayNum = now.getDate()
   const monthName = now.toLocaleDateString('en-AU', { month: 'long' })
   const year = now.getFullYear()
 
+  const [artistProfileId, setArtistProfileId] = useState<string | null>(null)
   const [todayStatus, setTodayStatus] = useState<ScheduleDay | null>(null)
   const [todaySessions, setTodaySessions] = useState<Session[]>([])
+  const [weekDays, setWeekDays] = useState<ScheduleDay[]>([])
+  const [weekSessions, setWeekSessions] = useState<Session[]>([])
+  const [weeklySubmission, setWeeklySubmission] = useState<{ submitted_at: string | null } | null>(null)
   const [loading, setLoading] = useState(true)
+  const [statusUpdating, setStatusUpdating] = useState(false)
+
+  const weekDates = getWeekDates(weekStart)
+
+  const loadData = useCallback(async () => {
+    if (!user) return
+    setLoading(true)
+
+    // Look up artist_profiles row
+    const { data: ap } = await supabase
+      .from('artist_profiles')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (!ap) { setLoading(false); return }
+    setArtistProfileId(ap.id)
+
+    const weekEnd = weekDates[6]
+
+    const [schedTodayResult, sessResult, weekSchedResult, weekSessResult, subResult] = await Promise.all([
+      supabase.from('schedule_days').select('*').eq('artist_id', ap.id).eq('date', today).maybeSingle(),
+      supabase.from('sessions').select('*').eq('artist_id', ap.id).eq('date', today).order('start_time'),
+      supabase.from('schedule_days').select('*').eq('artist_id', ap.id).gte('date', weekStart).lte('date', weekEnd),
+      supabase.from('sessions').select('id, date').eq('artist_id', ap.id).gte('date', weekStart).lte('date', weekEnd),
+      supabase.from('weekly_submissions').select('submitted_at').eq('artist_id', ap.id).eq('week_start_date', weekStart).maybeSingle(),
+    ])
+
+    setTodayStatus(schedTodayResult.data as ScheduleDay | null)
+    setTodaySessions((sessResult.data || []) as Session[])
+    setWeekDays((weekSchedResult.data || []) as ScheduleDay[])
+    setWeekSessions((weekSessResult.data || []) as Session[])
+    setWeeklySubmission(subResult.data as { submitted_at: string | null } | null)
+    setLoading(false)
+  }, [user, today, weekStart, weekDates])
 
   useEffect(() => {
-    async function load() {
-      if (!user) return
-      setLoading(true)
+    loadData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, today, weekStart])
 
-      const { data: ap } = await supabase
-        .from('artist_profiles')
-        .select('id')
-        .eq('user_id', user.id)
-        .single()
-
-      if (!ap) { setLoading(false); return }
-
-      const [schedResult, sessResult] = await Promise.all([
-        supabase.from('schedule_days').select('*').eq('artist_id', ap.id).eq('date', today).maybeSingle(),
-        supabase.from('sessions').select('*').eq('artist_id', ap.id).eq('date', today).order('start_time'),
-      ])
-
-      setTodayStatus(schedResult.data as ScheduleDay | null)
-      setTodaySessions((sessResult.data || []) as Session[])
-      setLoading(false)
+  // Quick-change today's status
+  async function setDayStatus(newStatus: ScheduleDayStatus) {
+    if (!artistProfileId) return
+    setStatusUpdating(true)
+    try {
+      if (todayStatus) {
+        // Update existing
+        const { error } = await supabase
+          .from('schedule_days')
+          .update({ status: newStatus })
+          .eq('id', todayStatus.id)
+        if (error) throw error
+        setTodayStatus({ ...todayStatus, status: newStatus })
+      } else {
+        // Insert new
+        const { data, error } = await supabase
+          .from('schedule_days')
+          .insert({ artist_id: artistProfileId, date: today, status: newStatus, number_of_clients: 0 })
+          .select()
+          .single()
+        if (error) throw error
+        setTodayStatus(data as ScheduleDay)
+      }
+      toast.success(`Status set to ${SCHEDULE_DAY_COLOURS[newStatus].label}`)
+    } catch {
+      toast.error('Failed to update status')
+    } finally {
+      setStatusUpdating(false)
     }
-    load()
-  }, [user, today])
+  }
 
   const displayName = profile?.display_name || profile?.full_name || 'Artist'
-  const envelopesMissing = todaySessions.filter(s => !s.envelope_submitted).length
+
+  // Week helpers
+  const weekDayMap = new Map(weekDays.map(d => [d.date, d]))
+  const weekSessionCounts = new Map<string, number>()
+  for (const s of weekSessions) {
+    weekSessionCounts.set(s.date, (weekSessionCounts.get(s.date) || 0) + 1)
+  }
+
+  const STATUS_BUTTONS: { status: ScheduleDayStatus; label: string }[] = [
+    { status: 'off', label: 'Off' },
+    { status: 'in_booked', label: 'Booked' },
+    { status: 'in_touchups', label: 'Touch-ups' },
+    { status: 'in_walkins', label: 'Walk-ins' },
+    { status: 'in_custom', label: 'Custom' },
+  ]
 
   return (
     <div>
-      {/* ── Header ── */}
+      {/* ── 1. Header ── */}
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-4xl font-bold text-text-primary font-display tracking-tight">
-            {dayName}
+            Hey, {displayName}
           </h1>
           <p className="text-lg text-text-secondary mt-1">
-            {dayNum}{getOrdinal(dayNum)} {monthName} {year}
+            {dayName} &middot; {dayNum}{getOrdinal(dayNum)} {monthName} {year}
           </p>
-          <p className="text-sm text-text-tertiary mt-1">Hey, {displayName}</p>
         </div>
         <div className="text-right">
           <LiveClock />
@@ -482,66 +547,232 @@ function ArtistDashboard() {
         <div className="flex justify-center py-12">
           <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
         </div>
+      ) : !artistProfileId ? (
+        <Card>
+          <div className="flex items-center gap-3 text-status-warning">
+            <AlertCircle className="w-5 h-5 shrink-0" />
+            <p className="text-sm">No artist profile found for your account. Ask an admin to set one up.</p>
+          </div>
+        </Card>
       ) : (
-        <>
-          {/* Today's status */}
-          <Card className="mb-6">
+        <div className="space-y-6">
+          {/* ── 2. Today's Status ── */}
+          <Card>
             <CardHeader>
-              <CardTitle>Today</CardTitle>
+              <CardTitle>Today&apos;s Status</CardTitle>
+              <Link href="/schedule">
+                <Button size="sm" icon={<Plus className="w-4 h-4" />}>Add Session</Button>
+              </Link>
             </CardHeader>
+
             {todayStatus ? (
-              <div className="flex items-center gap-3">
-                <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${SCHEDULE_DAY_COLOURS[todayStatus.status].bg} ${SCHEDULE_DAY_COLOURS[todayStatus.status].text}`}>
-                  {SCHEDULE_DAY_COLOURS[todayStatus.status].label}
-                </span>
-                <span className="text-sm text-text-secondary">{todaySessions.length} session{todaySessions.length !== 1 ? 's' : ''}</span>
-                {envelopesMissing > 0 && (
-                  <Badge variant="warning" dot>{envelopesMissing} envelope{envelopesMissing !== 1 ? 's' : ''} pending</Badge>
-                )}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${SCHEDULE_DAY_COLOURS[todayStatus.status].bg} ${SCHEDULE_DAY_COLOURS[todayStatus.status].text}`}>
+                    {SCHEDULE_DAY_COLOURS[todayStatus.status].label}
+                  </span>
+                  <span className="text-sm text-text-secondary">
+                    {todaySessions.length} session{todaySessions.length !== 1 ? 's' : ''} today
+                  </span>
+                </div>
+
+                {/* Quick-change buttons */}
+                <div className="flex flex-wrap gap-2">
+                  {STATUS_BUTTONS.map(btn => (
+                    <button
+                      key={btn.status}
+                      disabled={statusUpdating || todayStatus.status === btn.status}
+                      onClick={() => setDayStatus(btn.status)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                        todayStatus.status === btn.status
+                          ? `${SCHEDULE_DAY_COLOURS[btn.status].bg} ${SCHEDULE_DAY_COLOURS[btn.status].text} ring-2 ring-brand-500/30`
+                          : 'bg-surface-tertiary text-text-secondary hover:text-text-primary hover:bg-border-secondary'
+                      } disabled:opacity-50`}
+                    >
+                      {btn.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-sm text-status-warning">
-                <AlertCircle className="w-4 h-4" />
-                <span>No schedule set for today — <Link href="/schedule" className="text-brand-500 hover:underline">set it now</Link></span>
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-status-warning">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span className="text-sm">No status set for today — pick one below</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {STATUS_BUTTONS.map(btn => (
+                    <button
+                      key={btn.status}
+                      disabled={statusUpdating}
+                      onClick={() => setDayStatus(btn.status)}
+                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-surface-tertiary text-text-secondary hover:text-text-primary hover:bg-border-secondary transition-all disabled:opacity-50"
+                    >
+                      {btn.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
           </Card>
 
-          {/* Today's sessions */}
-          {todaySessions.length > 0 && (
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Today&apos;s Sessions</CardTitle>
-              </CardHeader>
-              <div className="space-y-2">
+          {/* ── 3. Today's Sessions ── */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Today&apos;s Sessions</CardTitle>
+              {todaySessions.length > 0 && (
+                <Badge variant="brand">{todaySessions.length}</Badge>
+              )}
+            </CardHeader>
+
+            {todaySessions.length === 0 ? (
+              <p className="text-sm text-text-tertiary py-4 text-center">No sessions booked for today</p>
+            ) : (
+              <div className="space-y-1">
                 {todaySessions.map(session => (
-                  <div key={session.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
-                    <div>
-                      <p className="text-sm font-medium text-text-primary">{session.client_reference || 'No name'}</p>
-                      <p className="text-xs text-text-tertiary">
-                        {session.session_type?.replace('_', ' ')} {session.start_time && `· ${session.start_time.slice(0, 5)}`}{session.end_time && ` – ${session.end_time.slice(0, 5)}`}
-                      </p>
+                  <div
+                    key={session.id}
+                    className="flex items-center justify-between py-3 px-3 -mx-3 rounded-xl hover:bg-surface-tertiary transition-colors cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center text-brand-500 shrink-0">
+                        <Calendar className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-text-primary">{session.client_reference || 'No name'}</p>
+                        <p className="text-xs text-text-tertiary">
+                          {session.session_type?.replace('_', ' ')}
+                          {session.start_time && ` · ${session.start_time.slice(0, 5)}`}
+                          {session.end_time && ` – ${session.end_time.slice(0, 5)}`}
+                        </p>
+                      </div>
                     </div>
-                    {session.envelope_submitted ? (
-                      <Badge variant="success">Envelope</Badge>
-                    ) : (
-                      <Badge variant="warning">No envelope</Badge>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {session.envelope_submitted ? (
+                        <span className="w-6 h-6 rounded-full bg-status-success-50 flex items-center justify-center" title="Envelope submitted">
+                          <Inbox className="w-3.5 h-3.5 text-status-success" />
+                        </span>
+                      ) : (
+                        <span className="w-6 h-6 rounded-full bg-status-warning-50 flex items-center justify-center" title="Envelope not submitted">
+                          <Inbox className="w-3.5 h-3.5 text-status-warning" />
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
-            </Card>
-          )}
+            )}
+          </Card>
 
-          <StatGrid>
-            <Link href="/schedule">
-              <StatCard title="Sessions Today" value={todaySessions.length} icon={<Calendar className="w-5 h-5" />} className="cursor-pointer hover:-translate-y-1 transition-transform" />
-            </Link>
+          {/* ── 4. This Week Overview ── */}
+          <Card>
+            <CardHeader>
+              <CardTitle>This Week</CardTitle>
+              <Link href="/schedule" className="text-xs font-semibold text-brand-500 hover:underline">
+                My Schedule &rarr;
+              </Link>
+            </CardHeader>
+
+            <div className="grid grid-cols-7 gap-2">
+              {weekDates.map(dateStr => {
+                const d = new Date(dateStr + 'T00:00:00')
+                const shortDay = d.toLocaleDateString('en-AU', { weekday: 'short' })
+                const dayOfMonth = d.getDate()
+                const isToday = dateStr === today
+                const schedEntry = weekDayMap.get(dateStr)
+                const sessCount = weekSessionCounts.get(dateStr) || 0
+                const sc = schedEntry ? SCHEDULE_DAY_COLOURS[schedEntry.status] : null
+
+                return (
+                  <div
+                    key={dateStr}
+                    className={`flex flex-col items-center py-3 rounded-xl transition-colors ${
+                      isToday ? 'bg-brand-50 ring-2 ring-brand-500/20' : 'bg-surface-tertiary'
+                    }`}
+                  >
+                    <span className={`text-[10px] font-semibold uppercase tracking-wider ${isToday ? 'text-brand-500' : 'text-text-tertiary'}`}>
+                      {shortDay}
+                    </span>
+                    <span className={`text-sm font-bold mt-0.5 ${isToday ? 'text-brand-500' : 'text-text-primary'}`}>
+                      {dayOfMonth}
+                    </span>
+                    {sc ? (
+                      <span className={`mt-1.5 w-2 h-2 rounded-full ${sc.bg.replace('bg-', 'bg-')}`} title={sc.label} />
+                    ) : (
+                      <span className="mt-1.5 w-2 h-2 rounded-full bg-neutral-200" title="No status" />
+                    )}
+                    {sessCount > 0 && (
+                      <span className="text-[10px] font-semibold text-text-secondary mt-1">{sessCount} sess</span>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </Card>
+
+          {/* ── 5. Quick Actions ── */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <Link href="/weekly-schedules">
-              <StatCard title="Envelopes Submitted" value={todaySessions.filter(s => s.envelope_submitted).length} icon={<ClipboardList className="w-5 h-5" />} className="cursor-pointer hover:-translate-y-1 transition-transform" />
+              <Card className="hover:-translate-y-1 transition-transform cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-brand-50 text-brand-500">
+                    <ClipboardList className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-text-primary">Submit Weekly Schedule</p>
+                    <p className="text-xs text-text-tertiary">Lock in your week</p>
+                  </div>
+                </div>
+              </Card>
             </Link>
-          </StatGrid>
-        </>
+            <Link href="/schedule">
+              <Card className="hover:-translate-y-1 transition-transform cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-brand-50 text-brand-500">
+                    <Calendar className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-text-primary">Request Leave</p>
+                    <p className="text-xs text-text-tertiary">Holiday, sick, or unpaid</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+            <Link href="/clients">
+              <Card className="hover:-translate-y-1 transition-transform cursor-pointer">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-brand-50 text-brand-500">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-text-primary">My Clients</p>
+                    <p className="text-xs text-text-tertiary">View your client list</p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          </div>
+
+          {/* ── 6. Weekly Submission Status ── */}
+          <Card>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <ClipboardList className="w-5 h-5 text-text-tertiary" />
+                <div>
+                  <p className="text-sm font-semibold text-text-primary">Weekly Schedule Submission</p>
+                  <p className="text-xs text-text-tertiary">Week of {weekStart}</p>
+                </div>
+              </div>
+              {weeklySubmission?.submitted_at ? (
+                <Badge variant="success" dot>Submitted</Badge>
+              ) : (
+                <Link href="/weekly-schedules">
+                  <Badge variant="warning" dot>Not Submitted</Badge>
+                </Link>
+              )}
+            </div>
+          </Card>
+        </div>
       )}
     </div>
   )
