@@ -99,11 +99,11 @@ export function Sidebar({ activePath = '/dashboard' }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-[var(--topbar-height)] border-b border-white/10 shrink-0">
-        <div className="w-8 h-8 rounded-lg bg-brand-500 flex items-center justify-center font-bold text-sm" style={{ color: '#0B0B0B' }}>
+        <div className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm" style={{ background: '#C6A667', color: '#040404' }}>
           V
         </div>
         {!collapsed && (
-          <span className="text-sm font-semibold text-white truncate tracking-wide" style={{ fontFamily: 'var(--font-display)' }}>
+          <span className="text-[11px] font-semibold text-white/80 truncate" style={{ fontFamily: 'var(--font-display)', letterSpacing: '0.25em' }}>
             VILLAINS
           </span>
         )}

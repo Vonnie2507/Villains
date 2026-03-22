@@ -32,10 +32,10 @@ export function Topbar({ onMenuClick, notifications = 0 }: TopbarProps) {
           <Menu className="w-5 h-5" />
         </button>
 
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-secondary text-text-tertiary text-sm w-64 cursor-pointer hover:bg-surface-tertiary">
-          <Search className="w-4 h-4" />
-          <span>Search...</span>
-          <kbd className="ml-auto text-xs bg-surface border border-border px-1.5 py-0.5 rounded">
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full text-text-tertiary text-xs w-56 cursor-pointer transition" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}>
+          <Search className="w-3.5 h-3.5" />
+          <span style={{ letterSpacing: '0.05em' }}>Search</span>
+          <kbd className="ml-auto text-[10px] px-1.5 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.35)' }}>
             /
           </kbd>
         </div>
