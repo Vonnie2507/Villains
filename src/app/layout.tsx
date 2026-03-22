@@ -8,15 +8,16 @@ import { ToastProvider } from '@/contexts/ToastContext'
 const themeScript = `
 (function() {
   try {
-    var mode = localStorage.getItem('villains-theme') || 'dark';
+    var mode = localStorage.getItem('villains-theme') || 'light';
     var resolved = mode;
     if (mode === 'system') {
       resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
+    document.documentElement.classList.remove('light','dark');
     document.documentElement.classList.add(resolved);
     document.documentElement.setAttribute('data-theme', resolved);
   } catch(e) {
-    document.documentElement.classList.add('dark');
+    document.documentElement.classList.add('light');
   }
 })();
 `
