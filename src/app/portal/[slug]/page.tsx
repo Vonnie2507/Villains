@@ -253,7 +253,7 @@ function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: stri
       if (error) throw error
       setSessions(prev => [...prev, data as Session])
       setNewClientName('')
-      setAddingClientFor(null)
+      // Keep the form open so they can add another client quickly
       const count = sessions.filter(s => s.date === date).length + 1
       const dayEntry = days.find(d => d.date === date)
       if (dayEntry) {
@@ -500,7 +500,16 @@ function ArtistPortalInner({ artist, slug }: { artist: ArtistProfile; slug: stri
                           </div>
 
                           {daySessions.length === 0 && addingClientFor !== date && (
-                            <p className="text-xs text-text-tertiary text-center py-3">No clients yet</p>
+                            <p className="text-xs text-text-tertiary text-center py-3">No clients yet — tap Add Client above</p>
+                          )}
+
+                          {daySessions.length > 0 && addingClientFor !== date && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setAddingClientFor(date); setNewClientName('') }}
+                              className="w-full mt-2 py-2.5 rounded-xl border border-dashed border-border text-xs font-semibold text-text-tertiary hover:text-brand-500 hover:border-brand-500/30 transition-all min-h-[44px] flex items-center justify-center gap-1"
+                            >
+                              <Plus className="w-3.5 h-3.5" /> Add Another Client
+                            </button>
                           )}
 
                           {daySessions.map(session => (
