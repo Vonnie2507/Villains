@@ -38,17 +38,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session: s } }) => {
-      setSession(s)
-      setUser(s?.user ?? null)
-      if (s?.user) {
-        try { await fetchProfile(s.user.id) } catch (e) { console.error('Profile fetch failed:', e) }
+    async function init() {
+      try {
+        const { data: { session: s } } = await supabase.auth.getSession()
+        setSession(s)
+        setUser(s?.user ?? null)
+        if (s?.user) {
+          try { await fetchProfile(s.user.id) } catch (e) { console.error('Profile fetch failed:', e) }
+        }
+      } catch (err) {
+        console.error('getSession failed:', err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
-    }).catch((err) => {
-      console.error('getSession failed:', err)
-      setLoading(false)
-    })
+    }
+    init()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, s) => {
       setSession(s)
