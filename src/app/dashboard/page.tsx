@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
 import { DashboardLayout } from '@/components/layouts/DashboardLayout'
 import { PageHeader } from '@/components/blocks/PageHeader'
 import { StatCard, StatGrid } from '@/components/blocks/StatCard'
@@ -141,9 +142,9 @@ function AdminDashboard() {
                     {weekSubmissions.total - weekSubmissions.submitted} artist{weekSubmissions.total - weekSubmissions.submitted !== 1 ? 's' : ''} haven&apos;t submitted their weekly schedule
                   </p>
                 </div>
-                <a href="/weekly-schedules" className="ml-auto">
+                <Link href="/weekly-schedules" className="ml-auto">
                   <Badge variant="warning">View</Badge>
-                </a>
+                </Link>
               </div>
             </Card>
           )}
@@ -218,7 +219,7 @@ function ArtistDashboard() {
             ) : (
               <div className="flex items-center gap-2 text-sm text-status-warning">
                 <AlertCircle className="w-4 h-4" />
-                <span>No schedule set for today — <a href="/schedule" className="text-brand-500 hover:underline">set it now</a></span>
+                <span>No schedule set for today — <Link href="/schedule" className="text-brand-500 hover:underline">set it now</Link></span>
               </div>
             )}
           </Card>

@@ -2,6 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
+import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import {
   LayoutDashboard, Calendar, ClipboardList, Inbox, Users, MessageSquare,
@@ -115,7 +116,7 @@ export function Sidebar({ activePath = '/dashboard' }: { activePath?: string }) 
               {group.items.map(item => {
                 const isActive = activePath === item.href
                 return (
-                  <a
+                  <Link
                     key={item.id}
                     href={item.href}
                     title={collapsed ? item.label : undefined}
@@ -131,7 +132,7 @@ export function Sidebar({ activePath = '/dashboard' }: { activePath?: string }) 
                         {item.badge}
                       </span>
                     )}
-                  </a>
+                  </Link>
                 )
               })}
             </div>
@@ -141,13 +142,13 @@ export function Sidebar({ activePath = '/dashboard' }: { activePath?: string }) 
 
       {/* Bottom */}
       <div className="px-3 py-3 space-y-1 shrink-0 sidebar-divider-top">
-        <a
+        <Link
           href="/settings"
           className="flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium sidebar-inactive transition-colors duration-150"
         >
           <Settings className="w-5 h-5" />
           {!collapsed && <span>Settings</span>}
-        </a>
+        </Link>
 
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 sidebar-logo">
