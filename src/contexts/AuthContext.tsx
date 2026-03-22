@@ -74,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useCallback(async () => {
     await supabase.auth.signOut()
     setProfile(null)
+    window.location.href = '/login'
   }, [])
 
   const resetPassword = useCallback(async (email: string): Promise<string | null> => {
