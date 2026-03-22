@@ -3,6 +3,7 @@
 import '@/styles/theme.css'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { ToastProvider } from '@/contexts/ToastContext'
+import { usePathname } from 'next/navigation'
 
 // Inline script to prevent flash of wrong theme on load + register service worker
 const themeScript = `
@@ -28,6 +29,9 @@ if ('serviceWorker' in navigator) {
 `
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const isPortal = pathname.startsWith('/portal')
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -49,11 +53,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <AuthProvider>
+        {isPortal ? (
           <ToastProvider>
             {children}
           </ToastProvider>
-        </AuthProvider>
+        ) : (
+          <AuthProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </AuthProvider>
+        )}
       </body>
     </html>
   )
