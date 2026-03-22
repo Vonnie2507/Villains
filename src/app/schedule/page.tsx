@@ -52,6 +52,40 @@ const HOUR_SLOTS = [
   '6:00 PM', '7:00 PM',
 ]
 
+// ── Pastel colour palette for artists (cycles if more than 12) ──
+const PASTEL_COLOURS = [
+  { bg: 'rgba(186, 230, 253, 0.15)', border: 'rgba(186, 230, 253, 0.30)', text: '#7dd3fc', dot: '#38bdf8' }, // sky
+  { bg: 'rgba(196, 181, 253, 0.15)', border: 'rgba(196, 181, 253, 0.30)', text: '#c4b5fd', dot: '#a78bfa' }, // violet
+  { bg: 'rgba(253, 186, 210, 0.15)', border: 'rgba(253, 186, 210, 0.30)', text: '#f9a8d4', dot: '#f472b6' }, // pink
+  { bg: 'rgba(167, 243, 208, 0.15)', border: 'rgba(167, 243, 208, 0.30)', text: '#6ee7b7', dot: '#34d399' }, // emerald
+  { bg: 'rgba(253, 230, 138, 0.15)', border: 'rgba(253, 230, 138, 0.30)', text: '#fcd34d', dot: '#fbbf24' }, // amber
+  { bg: 'rgba(253, 164, 175, 0.15)', border: 'rgba(253, 164, 175, 0.30)', text: '#fda4af', dot: '#fb7185' }, // rose
+  { bg: 'rgba(165, 180, 252, 0.15)', border: 'rgba(165, 180, 252, 0.30)', text: '#a5b4fc', dot: '#818cf8' }, // indigo
+  { bg: 'rgba(134, 239, 172, 0.15)', border: 'rgba(134, 239, 172, 0.30)', text: '#86efac', dot: '#4ade80' }, // green
+  { bg: 'rgba(249, 168, 212, 0.15)', border: 'rgba(249, 168, 212, 0.30)', text: '#f9a8d4', dot: '#ec4899' }, // fuchsia
+  { bg: 'rgba(147, 197, 253, 0.15)', border: 'rgba(147, 197, 253, 0.30)', text: '#93c5fd', dot: '#60a5fa' }, // blue
+  { bg: 'rgba(252, 211, 77, 0.15)',  border: 'rgba(252, 211, 77, 0.30)',  text: '#fcd34d', dot: '#f59e0b' }, // yellow
+  { bg: 'rgba(94, 234, 212, 0.15)',  border: 'rgba(94, 234, 212, 0.30)',  text: '#5eead4', dot: '#2dd4bf' }, // teal
+]
+
+function getArtistColour(index: number) {
+  return PASTEL_COLOURS[index % PASTEL_COLOURS.length]
+}
+
+// ── Pastel colours for session types ──
+const SESSION_TYPE_PASTELS: Record<string, { bg: string; border: string; text: string }> = {
+  new_piece:    { bg: 'rgba(196, 181, 253, 0.18)', border: 'rgba(196, 181, 253, 0.35)', text: '#c4b5fd' },
+  touchup:      { bg: 'rgba(167, 243, 208, 0.18)', border: 'rgba(167, 243, 208, 0.35)', text: '#6ee7b7' },
+  continuation: { bg: 'rgba(186, 230, 253, 0.18)', border: 'rgba(186, 230, 253, 0.35)', text: '#7dd3fc' },
+  flash:        { bg: 'rgba(253, 230, 138, 0.18)', border: 'rgba(253, 230, 138, 0.35)', text: '#fcd34d' },
+  other:        { bg: 'rgba(253, 186, 210, 0.18)', border: 'rgba(253, 186, 210, 0.35)', text: '#f9a8d4' },
+}
+
+function getSessionPastel(sessionType: string | null) {
+  if (!sessionType) return SESSION_TYPE_PASTELS.other
+  return SESSION_TYPE_PASTELS[sessionType] || SESSION_TYPE_PASTELS.other
+}
+
 // Convert "HH:MM:SS" or "HH:MM" to hour index (0 = 8am, 1 = 9am, etc.)
 function timeToSlot(time: string | null): number | null {
   if (!time) return null
@@ -228,17 +262,25 @@ function AdminCalendar() {
                 </tr>
               </thead>
               <tbody>
-                {sortedArtists.map(artist => {
+                {sortedArtists.map((artist, artistIndex) => {
                   const weekTotal = getWeekSessionCount(artist.id)
+                  const pastel = getArtistColour(artistIndex)
                   return (
                     <tr key={artist.id} className="border-b border-border last:border-0">
                       <td className="px-4 py-3">
-                        <p className="text-sm font-medium text-text-primary">{artist.display_name || 'Artist'}</p>
-                        {artist.seat_name_or_number && <p className="text-xs text-text-tertiary">Seat {artist.seat_name_or_number}</p>}
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: pastel.dot }} />
+                          <div>
+                            <p className="text-sm font-medium text-text-primary">{artist.display_name || 'Artist'}</p>
+                            {artist.seat_name_or_number && <p className="text-xs text-text-tertiary">Seat {artist.seat_name_or_number}</p>}
+                          </div>
+                        </div>
                       </td>
                       {view === 'busiest' && (
                         <td className="text-center px-2 py-3">
-                          <span className={`text-sm font-bold ${weekTotal > 0 ? 'text-brand-500' : 'text-text-tertiary'}`}>{weekTotal}</span>
+                          <span className="text-sm font-bold" style={{ color: weekTotal > 0 ? pastel.text : undefined }}>
+                            {weekTotal}
+                          </span>
                         </td>
                       )}
                       {weekDates.map(date => {
@@ -256,7 +298,21 @@ function AdminCalendar() {
                               <span className="text-xs text-text-tertiary">&mdash;</span>
                             )}
                             {sess.length > 0 && (
-                              <p className="text-[10px] text-text-tertiary mt-0.5">{sess.length} client{sess.length !== 1 ? 's' : ''}</p>
+                              <div className="flex items-center justify-center gap-1 mt-1">
+                                {sess.map((s, i) => (
+                                  <span
+                                    key={i}
+                                    className="w-1.5 h-1.5 rounded-full"
+                                    style={{ backgroundColor: getSessionPastel(s.session_type).text }}
+                                    title={s.client_reference || 'Client'}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                            {sess.length > 0 && (
+                              <p className="text-[10px] mt-0.5" style={{ color: pastel.text }}>
+                                {sess.length} client{sess.length !== 1 ? 's' : ''}
+                              </p>
                             )}
                           </td>
                         )
@@ -293,6 +349,10 @@ function DayView({
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
 
+  // Build a stable colour map using the full artist list order
+  const artistColourMap = new Map<string, ReturnType<typeof getArtistColour>>()
+  allArtists.forEach((a, i) => artistColourMap.set(a.id, getArtistColour(i)))
+
   // Artists not working today
   const offArtists = allArtists.filter(a => {
     const day = days.find(d => d.artist_id === a.id && d.date === selectedDate)
@@ -304,12 +364,10 @@ function DayView({
       if (s.artist_id !== artistId) return false
       const slot = timeToSlot(s.start_time)
       if (slot !== null) return slot === slotIndex
-      // If no start_time, don't place in time grid
       return false
     })
   }
 
-  // Sessions without a start_time (unscheduled but on this day)
   function getUnscheduledSessions(artistId: string) {
     return daySessions.filter(s => s.artist_id === artistId && !s.start_time)
   }
@@ -334,6 +392,20 @@ function DayView({
     <div>
       <p className="text-center text-sm font-medium text-text-primary mb-4">{dateLabel}</p>
 
+      {/* Session type legend */}
+      <div className="flex items-center justify-center gap-4 mb-4">
+        {(['new_piece', 'touchup', 'continuation', 'flash', 'other'] as const).map(type => {
+          const p = SESSION_TYPE_PASTELS[type]
+          const label = type === 'new_piece' ? 'New Piece' : type.charAt(0).toUpperCase() + type.slice(1)
+          return (
+            <div key={type} className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.text }} />
+              <span className="text-[10px] text-text-tertiary">{label}</span>
+            </div>
+          )
+        })}
+      </div>
+
       <Card padding={false}>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
@@ -344,9 +416,13 @@ function DayView({
                   const day = days.find(d => d.artist_id === artist.id && d.date === selectedDate)
                   const sc = day ? SCHEDULE_DAY_COLOURS[day.status as ScheduleDayStatus] : null
                   const artistSessions = daySessions.filter(s => s.artist_id === artist.id)
+                  const pastel = artistColourMap.get(artist.id) || PASTEL_COLOURS[0]
                   return (
-                    <th key={artist.id} className="text-center px-3 py-3 min-w-[140px]">
-                      <p className="text-xs font-semibold text-text-primary">{artist.display_name || 'Artist'}</p>
+                    <th key={artist.id} className="text-center px-3 py-3 min-w-[150px]" style={{ borderBottom: `3px solid ${pastel.dot}` }}>
+                      <div className="flex items-center justify-center gap-1.5 mb-1">
+                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: pastel.dot }} />
+                        <p className="text-xs font-semibold" style={{ color: pastel.text }}>{artist.display_name || 'Artist'}</p>
+                      </div>
                       {artist.seat_name_or_number && <p className="text-[10px] text-text-tertiary">Seat {artist.seat_name_or_number}</p>}
                       {sc && (
                         <Badge variant={day!.status === 'in_booked' ? 'success' : 'brand'} className="mt-1">
@@ -365,17 +441,34 @@ function DayView({
                   <td className="px-4 py-3 text-xs font-medium text-text-tertiary whitespace-nowrap sticky left-0 bg-surface z-10">{label}</td>
                   {artists.map(artist => {
                     const session = getSessionAtSlot(artist.id, slotIndex)
+                    const pastel = artistColourMap.get(artist.id) || PASTEL_COLOURS[0]
+                    const sessionPastel = session ? getSessionPastel(session.session_type) : null
                     return (
-                      <td key={artist.id} className="px-2 py-2 text-center">
+                      <td key={artist.id} className="px-2 py-1.5">
                         {session ? (
-                          <div className="px-2 py-1.5 rounded-lg bg-brand-50 border border-brand-500/20">
-                            <p className="text-xs font-medium text-brand-500 truncate">{session.client_reference || 'Client'}</p>
+                          <div
+                            className="px-3 py-2 rounded-xl text-left"
+                            style={{
+                              backgroundColor: sessionPastel!.bg,
+                              borderLeft: `3px solid ${pastel.dot}`,
+                            }}
+                          >
+                            <p className="text-xs font-semibold truncate" style={{ color: pastel.text }}>
+                              {session.client_reference || 'Client'}
+                            </p>
                             {session.session_type && (
-                              <p className="text-[10px] text-text-tertiary">{session.session_type.replace('_', ' ')}</p>
+                              <p className="text-[10px] font-medium" style={{ color: sessionPastel!.text }}>
+                                {session.session_type.replace('_', ' ')}
+                              </p>
+                            )}
+                            {session.start_time && session.end_time && (
+                              <p className="text-[9px] text-text-tertiary mt-0.5">
+                                {session.start_time.slice(0, 5)} – {session.end_time.slice(0, 5)}
+                              </p>
                             )}
                           </div>
                         ) : (
-                          <span className="text-text-tertiary/30">&mdash;</span>
+                          <div className="h-8" />
                         )}
                       </td>
                     )
@@ -389,18 +482,32 @@ function DayView({
                   <td className="px-4 py-3 text-xs font-semibold text-text-secondary uppercase sticky left-0 bg-surface z-10">Unscheduled</td>
                   {artists.map(artist => {
                     const unsched = getUnscheduledSessions(artist.id)
+                    const pastel = artistColourMap.get(artist.id) || PASTEL_COLOURS[0]
                     return (
                       <td key={artist.id} className="px-2 py-2">
                         {unsched.length > 0 ? (
                           <div className="space-y-1">
-                            {unsched.map(s => (
-                              <div key={s.id} className="px-2 py-1 rounded-lg bg-surface-tertiary text-xs">
-                                <p className="font-medium text-text-primary truncate">{s.client_reference || 'Client'}</p>
-                              </div>
-                            ))}
+                            {unsched.map(s => {
+                              const sp = getSessionPastel(s.session_type)
+                              return (
+                                <div
+                                  key={s.id}
+                                  className="px-3 py-1.5 rounded-lg text-xs"
+                                  style={{
+                                    backgroundColor: sp.bg,
+                                    borderLeft: `3px solid ${pastel.dot}`,
+                                  }}
+                                >
+                                  <p className="font-semibold truncate" style={{ color: pastel.text }}>{s.client_reference || 'Client'}</p>
+                                  {s.session_type && (
+                                    <p className="text-[10px]" style={{ color: sp.text }}>{s.session_type.replace('_', ' ')}</p>
+                                  )}
+                                </div>
+                              )
+                            })}
                           </div>
                         ) : (
-                          <span className="text-text-tertiary/30">&mdash;</span>
+                          <div className="h-8" />
                         )}
                       </td>
                     )
@@ -413,9 +520,18 @@ function DayView({
       </Card>
 
       {offArtists.length > 0 && (
-        <p className="text-xs text-text-tertiary text-center mt-3">
-          Off today: {offArtists.map(a => a.display_name || 'Artist').join(', ')}
-        </p>
+        <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
+          <span className="text-[10px] text-text-tertiary uppercase font-semibold tracking-wider">Off today:</span>
+          {offArtists.map(a => {
+            const pastel = artistColourMap.get(a.id) || PASTEL_COLOURS[0]
+            return (
+              <span key={a.id} className="inline-flex items-center gap-1 text-xs" style={{ color: pastel.text }}>
+                <span className="w-1.5 h-1.5 rounded-full opacity-40" style={{ backgroundColor: pastel.dot }} />
+                {a.display_name || 'Artist'}
+              </span>
+            )
+          })}
+        </div>
       )}
     </div>
   )
