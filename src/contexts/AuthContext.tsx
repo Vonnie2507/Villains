@@ -40,11 +40,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function init() {
       try {
-        const { data: { session: s } } = await supabase.auth.getSession()
-        setSession(s)
-        setUser(s?.user ?? null)
-        if (s?.user) {
-          try { await fetchProfile(s.user.id) } catch (e) { console.error('Profile fetch failed:', e) }
+        // Race against a timeout to prevent auth lock from blocking portal pages
+        const sessionPromise = supabase.auth.getSession()
+        const timeoutPromise = new Promise<null>(resolve => setTimeout(() => resolve(null), 3000))
+        const result = await Promise.race([sessionPromise, timeoutPromise])
+
+        if (result && 'data' in result) {
+          const s = result.data.session
+          setSession(s)
+          setUser(s?.user ?? null)
+          if (s?.user) {
+            try { await fetchProfile(s.user.id) } catch (e) { console.error('Profile fetch failed:', e) }
+          }
         }
       } catch (err) {
         console.error('getSession failed:', err)
