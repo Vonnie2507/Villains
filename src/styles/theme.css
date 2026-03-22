@@ -67,24 +67,24 @@
   --neutral-800: #d4d4d4;
   --neutral-900: #f5f5f5;
 
-  /* ── SURFACES ── Command deck panels ── */
-  --surface:           #0a0a0a;
-  --surface-secondary: #040404;
-  --surface-tertiary:  #111111;
+  /* ── SURFACES ── Visible contrast between layers ── */
+  --surface:           #1a1a1a;
+  --surface-secondary: #0e0e0e;
+  --surface-tertiary:  #252525;
   --surface-overlay:   rgba(0, 0, 0, 0.80);
-  --surface-glass:     rgba(255, 255, 255, 0.04);
+  --surface-glass:     rgba(255, 255, 255, 0.06);
 
-  /* ── BORDERS ── Ultra-subtle white opacity ── */
-  --border:           rgba(255, 255, 255, 0.10);
-  --border-secondary: rgba(255, 255, 255, 0.15);
-  --border-subtle:    rgba(255, 255, 255, 0.05);
-  --border-strong:    rgba(255, 255, 255, 0.20);
+  /* ── BORDERS ── Visible card edges ── */
+  --border:           rgba(255, 255, 255, 0.12);
+  --border-secondary: rgba(255, 255, 255, 0.18);
+  --border-subtle:    rgba(255, 255, 255, 0.06);
+  --border-strong:    rgba(255, 255, 255, 0.25);
   --border-focus:     #ffffff;
 
   /* ── TEXT ── White hierarchy ── */
   --text-primary:   #f5f5f5;
-  --text-secondary: rgba(255, 255, 255, 0.60);
-  --text-tertiary:  rgba(255, 255, 255, 0.35);
+  --text-secondary: rgba(255, 255, 255, 0.70);
+  --text-tertiary:  rgba(255, 255, 255, 0.42);
   --text-inverse:   #040404;
   --text-link:      var(--brand-500);
 
@@ -156,7 +156,7 @@
   /* ── LAYOUT ── */
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 72px;
-  --sidebar-bg: #040404;
+  --sidebar-bg: #141414;
   --sidebar-text: rgba(255, 255, 255, 0.40);
   --sidebar-text-active: #f5f5f5;
   --sidebar-hover: rgba(255, 255, 255, 0.06);
