@@ -170,7 +170,8 @@ export function ArtistScheduleView() {
     setScheduleDays(dayMap)
     setSessions((sessionsRes.data as Session[]) || [])
     setLoading(false)
-  }, [artistProfileId, viewMode, weekDates, selectedDate, monthYear])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [artistProfileId, viewMode, weekStart, selectedDate, monthYear.year, monthYear.month])
 
   useEffect(() => {
     loadData()

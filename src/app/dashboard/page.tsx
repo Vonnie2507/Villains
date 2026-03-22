@@ -12,7 +12,13 @@ import { supabase } from '@/lib/supabase'
 import { toDateString, getWeekStart } from '@/lib/dates'
 import { SCHEDULE_DAY_COLOURS } from '@/types'
 import type { ScheduleDay, ArtistProfile, ScheduleDayStatus, Session } from '@/types'
-import { Calendar, Users, AlertCircle, ClipboardList, Inbox } from 'lucide-react'
+import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
+import { Select } from '@/components/ui/Select'
+import { Modal } from '@/components/ui/Modal'
+import { useToast } from '@/contexts/ToastContext'
+import { CLIENT_SOURCE_OPTIONS } from '@/types'
+import { Calendar, Users, AlertCircle, ClipboardList, Inbox, Plus, UserPlus } from 'lucide-react'
 
 /* ── Time slot grid config ── */
 const TIME_SLOTS = [
@@ -49,12 +55,57 @@ export default function DashboardPage() {
 }
 
 function AdminDashboard() {
+  const { toast } = useToast()
   const [todaySchedule, setTodaySchedule] = useState<(ScheduleDay & { artist_profile?: ArtistProfile })[]>([])
   const [todaySessions, setTodaySessions] = useState<(Session & { artist_profile?: ArtistProfile })[]>([])
   const [artistProfiles, setArtistProfiles] = useState<ArtistProfile[]>([])
   const [weekSubmissions, setWeekSubmissions] = useState<{ total: number; submitted: number }>({ total: 0, submitted: 0 })
   const [newEnquiries, setNewEnquiries] = useState(0)
   const [loading, setLoading] = useState(true)
+
+  // Quick enquiry modal
+  const [showEnquiryModal, setShowEnquiryModal] = useState(false)
+  const [enquiryForm, setEnquiryForm] = useState({ display_name: '', source: 'walk_in', notes: '' })
+  const [enquirySaving, setEnquirySaving] = useState(false)
+
+  async function handleQuickEnquiry(isWalkIn: boolean) {
+    if (isWalkIn) {
+      setEnquiryForm({ display_name: '', source: 'walk_in', notes: '' })
+    } else {
+      setEnquiryForm({ display_name: '', source: 'instagram_dm', notes: '' })
+    }
+    setShowEnquiryModal(true)
+  }
+
+  async function submitEnquiry() {
+    if (!enquiryForm.display_name.trim()) {
+      toast.error('Name is required')
+      return
+    }
+    setEnquirySaving(true)
+    try {
+      const { error } = await supabase
+        .from('client_profiles')
+        .insert({
+          artist_id: artistProfiles[0]?.id || null,
+          display_name: enquiryForm.display_name,
+          source: enquiryForm.source,
+          notes: enquiryForm.notes || null,
+          status: 'lead',
+          stage: 'new_enquiry',
+          priority: 'normal',
+          handoff_status: 'not_assigned',
+        })
+      if (error) throw error
+      toast.success('Enquiry added')
+      setShowEnquiryModal(false)
+      setNewEnquiries(prev => prev + 1)
+    } catch {
+      toast.error('Failed to add enquiry')
+    } finally {
+      setEnquirySaving(false)
+    }
+  }
 
   const today = toDateString(new Date())
   const weekStart = getWeekStart()
@@ -158,7 +209,7 @@ function AdminDashboard() {
 
   return (
     <div>
-      {/* ── Header: Day name + Date + Clock ── */}
+      {/* ── Header: Day name + Date + Clock + Quick Actions ── */}
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-4xl font-bold text-text-primary font-display tracking-tight">
@@ -168,10 +219,47 @@ function AdminDashboard() {
             {dayNum}{getOrdinal(dayNum)} {monthName} {year}
           </p>
         </div>
-        <div className="text-right">
+        <div className="flex flex-col items-end gap-3">
           <LiveClock />
+          <div className="flex gap-2">
+            <Button size="sm" icon={<Plus className="w-4 h-4" />} onClick={() => handleQuickEnquiry(false)}>
+              New Enquiry
+            </Button>
+            <Button size="sm" variant="outline" icon={<UserPlus className="w-4 h-4" />} onClick={() => handleQuickEnquiry(true)}>
+              Walk-in
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* Quick Enquiry Modal */}
+      <Modal open={showEnquiryModal} onClose={() => setShowEnquiryModal(false)} title="Quick Add Enquiry">
+        <div className="space-y-4">
+          <Input
+            label="Name"
+            value={enquiryForm.display_name}
+            onChange={e => setEnquiryForm(f => ({ ...f, display_name: e.target.value }))}
+            placeholder="Client name or reference"
+            required
+          />
+          <Select
+            label="Source"
+            options={CLIENT_SOURCE_OPTIONS}
+            value={enquiryForm.source}
+            onChange={e => setEnquiryForm(f => ({ ...f, source: e.target.value }))}
+          />
+          <Input
+            label="Notes (optional)"
+            value={enquiryForm.notes}
+            onChange={e => setEnquiryForm(f => ({ ...f, notes: e.target.value }))}
+            placeholder="Style interest, placement, etc."
+          />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setShowEnquiryModal(false)}>Cancel</Button>
+            <Button loading={enquirySaving} onClick={submitEnquiry}>Add Enquiry</Button>
+          </div>
+        </div>
+      </Modal>
 
       {loading ? (
         <div className="flex justify-center py-12">

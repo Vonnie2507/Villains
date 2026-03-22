@@ -53,6 +53,8 @@ export default function SettingsPage() {
   })
   const [companyLoading, setCompanyLoading] = useState(false)
   const [companySaving, setCompanySaving] = useState(false)
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+  const [logoUploading, setLogoUploading] = useState(false)
 
   /* ─── Profile state ─── */
   const [fullName, setFullName] = useState('')
@@ -95,6 +97,15 @@ export default function SettingsPage() {
         })
         setStudio(mapped)
       }
+
+      // Load logo URL
+      const { data: logoData } = await supabase
+        .from('app_settings')
+        .select('value')
+        .eq('category', 'studio')
+        .eq('key', 'studio_logo')
+        .single()
+      if (logoData?.value) setLogoUrl(logoData.value)
     } catch (err) {
       console.error('Failed to load studio settings:', err)
     } finally {
@@ -126,6 +137,46 @@ export default function SettingsPage() {
       toast.error(message)
     } finally {
       setCompanySaving(false)
+    }
+  }
+
+  /* ─── Logo upload ─── */
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLogoUploading(true)
+
+    try {
+      const ext = file.name.split('.').pop()
+      const path = `logo/studio-logo.${ext}`
+
+      const { error: uploadError } = await supabase.storage
+        .from('studio-assets')
+        .upload(path, file, { upsert: true })
+
+      if (uploadError) throw uploadError
+
+      const { data: urlData } = supabase.storage
+        .from('studio-assets')
+        .getPublicUrl(path)
+
+      const publicUrl = urlData.publicUrl
+
+      // Save URL to app_settings
+      await supabase
+        .from('app_settings')
+        .upsert(
+          { category: 'studio', key: 'studio_logo', value: publicUrl, label: 'Studio Logo' },
+          { onConflict: 'category,key' }
+        )
+
+      setLogoUrl(publicUrl)
+      toast.success('Logo uploaded')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to upload logo'
+      toast.error(message)
+    } finally {
+      setLogoUploading(false)
     }
   }
 
@@ -291,6 +342,32 @@ export default function SettingsPage() {
                     value={studio.studio_address}
                     onChange={e => updateStudioField('studio_address', e.target.value)}
                   />
+                </FormRow>
+                <FormRow label="Studio Logo" description="Upload your studio logo">
+                  <div className="flex items-center gap-4">
+                    {logoUrl && (
+                      <img
+                        src={logoUrl}
+                        alt="Studio logo"
+                        className="w-16 h-16 rounded-xl object-contain border border-border bg-surface-tertiary"
+                      />
+                    )}
+                    <div>
+                      <label className="cursor-pointer">
+                        <span className="inline-flex items-center px-4 py-2 text-sm font-semibold rounded-xl bg-surface-tertiary text-text-primary hover:bg-border-secondary transition-colors">
+                          {logoUploading ? 'Uploading...' : logoUrl ? 'Change Logo' : 'Upload Logo'}
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleLogoUpload}
+                          disabled={logoUploading}
+                        />
+                      </label>
+                      <p className="text-xs text-text-tertiary mt-1">PNG, JPG, SVG. Max 10MB.</p>
+                    </div>
+                  </div>
                 </FormRow>
               </>
             )}

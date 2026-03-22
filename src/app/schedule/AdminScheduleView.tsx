@@ -150,7 +150,8 @@ export function AdminScheduleView() {
 
     setArtistRows(rows)
     setLoading(false)
-  }, [viewMode, weekStart, weekDates, selectedDate, monthYear])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewMode, weekStart, selectedDate, monthYear.year, monthYear.month])
 
   useEffect(() => {
     loadData()
