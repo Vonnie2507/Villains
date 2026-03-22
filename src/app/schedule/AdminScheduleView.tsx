@@ -94,68 +94,78 @@ export function AdminScheduleView() {
     async function fetchData() {
       setLoading(true)
 
-      let startDate: string
-      let endDate: string
+      try {
+        let startDate: string
+        let endDate: string
 
-      const wd = getWeekDates(weekStart)
-      if (viewMode === 'week') {
-        startDate = wd[0]
-        endDate = wd[6]
-      } else if (viewMode === 'day') {
-        startDate = selectedDate
-        endDate = selectedDate
-      } else {
-        const first = new Date(monthYear.year, monthYear.month, 1)
-        const last = new Date(monthYear.year, monthYear.month + 1, 0)
-        startDate = toDateString(first)
-        endDate = toDateString(last)
+        const wd = getWeekDates(weekStart)
+        if (viewMode === 'week') {
+          startDate = wd[0]
+          endDate = wd[6]
+        } else if (viewMode === 'day') {
+          startDate = selectedDate
+          endDate = selectedDate
+        } else {
+          const first = new Date(monthYear.year, monthYear.month, 1)
+          const last = new Date(monthYear.year, monthYear.month + 1, 0)
+          startDate = toDateString(first)
+          endDate = toDateString(last)
+        }
+
+        const { data: artists, error: artistError } = await supabase
+          .from('artist_profiles')
+          .select('*, profile:profiles!artist_profiles_user_id_fkey(*)')
+          .order('display_name')
+
+        if (artistError) { console.error('artist_profiles error:', artistError); }
+        if (cancelled) return
+
+        const [daysRes, sessionsRes] = await Promise.all([
+          supabase
+            .from('schedule_days')
+            .select('*')
+            .gte('date', startDate)
+            .lte('date', endDate)
+            .order('date'),
+          supabase
+            .from('sessions')
+            .select('*')
+            .gte('date', startDate)
+            .lte('date', endDate)
+            .order('start_time'),
+        ])
+
+        if (cancelled) return
+        if (daysRes.error) console.error('schedule_days error:', daysRes.error)
+        if (sessionsRes.error) console.error('sessions error:', sessionsRes.error)
+
+        const allDays = (daysRes.data as ScheduleDay[]) || []
+        const allSessions = (sessionsRes.data as Session[]) || []
+
+        const daysByArtist = new Map<string, Map<string, ScheduleDay>>()
+        for (const d of allDays) {
+          if (!daysByArtist.has(d.artist_id)) daysByArtist.set(d.artist_id, new Map())
+          daysByArtist.get(d.artist_id)!.set(d.date, d)
+        }
+
+        const sessionsByArtist = new Map<string, Session[]>()
+        for (const s of allSessions) {
+          if (!sessionsByArtist.has(s.artist_id)) sessionsByArtist.set(s.artist_id, [])
+          sessionsByArtist.get(s.artist_id)!.push(s)
+        }
+
+        const rows: ArtistRow[] = ((artists as ArtistProfile[]) || []).map(artist => ({
+          artist,
+          scheduleDays: daysByArtist.get(artist.id) || new Map(),
+          sessions: sessionsByArtist.get(artist.id) || [],
+        }))
+
+        setArtistRows(rows)
+      } catch (err) {
+        console.error('Calendar fetch error:', err)
+      } finally {
+        setLoading(false)
       }
-
-      const { data: artists } = await supabase
-        .from('artist_profiles')
-        .select('*, profile:profiles!artist_profiles_user_id_fkey(*)')
-        .order('display_name')
-
-      const [daysRes, sessionsRes] = await Promise.all([
-        supabase
-          .from('schedule_days')
-          .select('*')
-          .gte('date', startDate)
-          .lte('date', endDate)
-          .order('date'),
-        supabase
-          .from('sessions')
-          .select('*')
-          .gte('date', startDate)
-          .lte('date', endDate)
-          .order('start_time'),
-      ])
-
-      if (cancelled) return
-
-      const allDays = (daysRes.data as ScheduleDay[]) || []
-      const allSessions = (sessionsRes.data as Session[]) || []
-
-      const daysByArtist = new Map<string, Map<string, ScheduleDay>>()
-      for (const d of allDays) {
-        if (!daysByArtist.has(d.artist_id)) daysByArtist.set(d.artist_id, new Map())
-        daysByArtist.get(d.artist_id)!.set(d.date, d)
-      }
-
-      const sessionsByArtist = new Map<string, Session[]>()
-      for (const s of allSessions) {
-        if (!sessionsByArtist.has(s.artist_id)) sessionsByArtist.set(s.artist_id, [])
-        sessionsByArtist.get(s.artist_id)!.push(s)
-      }
-
-      const rows: ArtistRow[] = ((artists as ArtistProfile[]) || []).map(artist => ({
-        artist,
-        scheduleDays: daysByArtist.get(artist.id) || new Map(),
-        sessions: sessionsByArtist.get(artist.id) || [],
-      }))
-
-      setArtistRows(rows)
-      setLoading(false)
     }
 
     fetchData()
